@@ -61,9 +61,6 @@ export default {
     deleteListItem(id) {
       this.$emit("deleteListItem", id);
     }
-
-
-    
   }
 };
 </script>
@@ -74,12 +71,11 @@ export default {
   margin-bottom: 20px;
   border-bottom-color: #42b983;
   display: flex;
-  width: 30%;
 }
 
 .buttonContainer {
   display: flex;
-  cursor:pointer;
+  cursor: pointer;
 }
 
 .mb5 {

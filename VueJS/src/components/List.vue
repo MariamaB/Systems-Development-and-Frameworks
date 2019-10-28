@@ -1,34 +1,32 @@
 <template>
-  <div>
+  <div class="mlt">
     <h2>Todo List</h2>
-		<AddListItem
-			v-model="newItemText"
-			@keydown.enter="addItem"
-      @click="addItem"
-		/>
-    <ol v-if="todos.length">
-      <list-item
-        v-bind:key="item.id"
-        v-for="item in this.todos"
-        v-bind:id="item.id"
-        v-bind:message="item.message"
-        v-bind:onEdit="item.onEdit"
-        @deleteListItem="deleteListItem($event)"
-        @messageChanged="editListItem(item.id, $event)"
-      ></list-item>
-    </ol>
-    <p v-else>
-			Nothing left in the list. Add a new todo in the input above.
-		</p>
+    <div class="listContainer">
+      <ol v-if="todos.length">
+        <list-item
+          v-bind:key="item.id"
+          v-for="item in this.todos"
+          v-bind:id="item.id"
+          v-bind:message="item.message"
+          v-bind:onEdit="item.onEdit"
+          @deleteListItem="deleteListItem($event)"
+          @messageChanged="editListItem(item.id, $event)"
+        ></list-item>
+      </ol>
+      <p v-else>Nothing left in the list. Add a new todo in the input aside.</p>
+
+      <div class="addContainer">
+        <AddListItem v-model="newItemText" @keydown.enter="addItem" @click="addItem" />
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
 import ListItem from "./ListItem.vue";
-import AddListItem from './AddListItem.vue'
+import AddListItem from "./AddListItem.vue";
 
-
-let nextItemId = 1
+let nextItemId = 1;
 
 export default {
   name: "list",
@@ -38,16 +36,16 @@ export default {
   },
   data() {
     return {
-      newItemText: '',
+      newItemText: "",
       todos: [
-        {id: nextItemId++, message: "Foo" },
-        {id: nextItemId++, message: "Bar" },
-        {id: nextItemId++, message: "Baz" }
+        { id: nextItemId++, message: "Foo" },
+        { id: nextItemId++, message: "Bar" },
+        { id: nextItemId++, message: "Baz" }
       ]
     };
   },
   methods: {
-      addItem() {
+    addItem() {
       const trimmedText = this.newItemText.trim();
       if (trimmedText) {
         this.todos.push({
@@ -72,7 +70,25 @@ export default {
 </script>
 
 <style scoped>
-div {
+.listContainer {
+  flex-direction: row;
+  display: flex;
+}
+
+.mlt {
   margin: 5% 0 0 10%;
+}
+
+.addContainer {
+  display: flex;
+  align-items: flex-end;
+  margin-left: 10%;
+  flex: 3;
+}
+
+ol {
+  flex: 2;
+  display: flex;
+  flex-direction: column;
 }
 </style>
