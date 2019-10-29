@@ -20,7 +20,6 @@ export default {
   },
   computed: {
     listeners() {
-      /*  https://codesandbox.io/s/o29j95wx9 */
       return {
         ...this.$listeners,
 
