@@ -2,6 +2,6 @@
 
 | Github Alias                                         | Name         |
 | ---------------------------------------------------- | ------------ |
-| [@MariamaB](https://github.com/MariamaB)             | Miriam       |
-| [@angembonda](https://github.com/angembonda) 		   | Ange         |
-| [@steffi201028](https://github.com/steffi201028)     | Stephanie    |
+| [@your](https://github.com/your)                     | Alice A.     |
+| [@github-account](https://github.com/github-account) | Bob B.       |
+| [@goes-here](https://github.com/goes-here)           | Mallory M.   |
