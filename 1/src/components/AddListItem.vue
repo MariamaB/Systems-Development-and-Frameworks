@@ -3,7 +3,7 @@
     <input type="text" placeholder="New todo" :value="value" v-on="listeners" />
     <span class="space"></span>
     <span class="buttonContainer">
-      <a v-on="listeners">
+      <a v-on="listeners" id='add'>
         <img title="Add" class="icon" src="../assets/add.png" />
       </a>
     </span>

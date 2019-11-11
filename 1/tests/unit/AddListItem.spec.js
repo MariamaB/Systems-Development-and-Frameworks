@@ -6,6 +6,7 @@ import { mount } from '@vue/test-utils';
 
 describe('ListItem', () => {
 	describe('TestAddToDo', () => {
+        
 		const wrapper = mount(List, {
 			name: 'list',
 			propsData: {}
@@ -20,21 +21,33 @@ describe('ListItem', () => {
             expect(numberOfItemsBeforeAdding).toEqual(3);
         });
         
-        describe('fill out input field and emit Add', () => {
+       describe('fill out input field and emit Add via click on button and via enter', () => {
             wrapper.find("input").setValue("alice")
-            it('$emit `Add` with newTodo', () => {
-                const Add = wrapper.find('a#add'); 
-                Add.trigger('click');
+            it('$emit `Add` with newTodo via button', () => {
+                wrapper.find('a#add').trigger('click'); 
+              
                 expect(wrapper.html()).toContain('<span>alice</span>');
+                const numberOfItemsAfterAdding = wrapper.findAll(ListItem).length;
+                //console.log(numberOfItemsAfterAdding);
+                expect(numberOfItemsAfterAdding).toEqual(4);
+            
+
+            });
+
+            it('$emit `Add` with newTodo via enter', () => {
+                wrapper.find("input").setValue("bob");
+                wrapper.find("input").trigger('keydown.enter');
+                expect(wrapper.html()).toContain('<span>bob</span>');
             
                 const numberOfItemsAfterAdding = wrapper.findAll(ListItem).length;
-               // console.log(numberOfItems);
-                expect(numberOfItemsAfterAdding).toEqual(4);
-                //console.log(wrapper.html());
+               //console.log(numberOfItemsAfterAdding);
+               expect(numberOfItemsAfterAdding).toEqual(5);
+            
                 
             });
             
         });
+        
 
         
     });
