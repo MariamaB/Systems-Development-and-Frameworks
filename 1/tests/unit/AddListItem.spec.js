@@ -1,4 +1,3 @@
-import { shallowMount } from '@vue/test-utils';
 import List from '@/components/List.vue';
 import ListItem from '@/components/ListItem.vue';
 import { mount } from '@vue/test-utils';
