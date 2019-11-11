@@ -57,11 +57,11 @@ describe('ListItem', () => {
 
 			describe('testing `Delete` button', () => {
 				it('click on button emits delete event', () => {
-					wrapper.setProps({ id: 1, message: 'Test'});
-					expect(wrapper.vm.message).toBe('Test');
+					expect(wrapper.html()).toContain('<span>Moi</span>');
 					const aArray = wrapper.findAll('a');
 					const Delete = aArray.at(1);
 					Delete.trigger('click');
+					expect(wrapper.emitted('deleteListItem').toBeTruthy);
 					expect(wrapper.find(wrapper.vm.message).exists()).toBe(false);
 				
 				});
