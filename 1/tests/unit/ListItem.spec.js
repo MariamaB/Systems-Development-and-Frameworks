@@ -22,6 +22,7 @@ describe('ListItem', () => {
 			}
 		});
 
+		
 		it('renders `item.message`', () => {
 			expect(wrapper.vm.message).toBe('Foo');
 		});
@@ -53,6 +54,21 @@ describe('ListItem', () => {
 					expect(wrapper.element).toMatchSnapshot(); // 2 Snapshot are produced to examine the state before and after edit, to see state while editting "Save click" should be commented and except onEdit must be Truthy
 				});
 			});
+
+			describe('testing `Delete` button', () => {
+				it('click on button emits delete event', () => {
+					expect(wrapper.html()).toContain('<span>Moi</span>');
+					const aArray = wrapper.findAll('a');
+					const Delete = aArray.at(1);
+					Delete.trigger('click');
+					expect(wrapper.emitted('deleteListItem').toBeTruthy);
+					expect(wrapper.find(wrapper.vm.message).exists()).toBe(false);
+				
+				});
+			});
+
+
+	
 
 			//Note in Snapshot just 2 icons can be seen according to the statement v-if="!this.onEdit"
 		});
