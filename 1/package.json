@@ -9,7 +9,9 @@
 		"test": "vue-cli-service test:unit"
 	},
 	"dependencies": {
+		"apollo-server": "^2.9.9",
 		"core-js": "^3.1.2",
+		"graphql": "^14.5.8",
 		"vue": "^2.6.10",
 		"vue-mc": "^0.6.0"
 	},
@@ -33,13 +35,18 @@
 		"env": {
 			"node": true
 		},
-		"extends": [ "plugin:vue/essential", "eslint:recommended" ],
+		"extends": [
+			"plugin:vue/essential",
+			"eslint:recommended"
+		],
 		"parserOptions": {
 			"parser": "babel-eslint"
 		},
 		"overrides": [
 			{
-				"files": [ "tests/**/*.spec.js" ],
+				"files": [
+					"tests/**/*.spec.js"
+				],
 				"env": {
 					"jest": true
 				}
@@ -51,5 +58,8 @@
 			"autoprefixer": {}
 		}
 	},
-	"browserslist": [ "> 1%", "last 2 versions" ]
+	"browserslist": [
+		"> 1%",
+		"last 2 versions"
+	]
 }
