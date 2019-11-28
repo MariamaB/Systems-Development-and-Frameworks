@@ -9,6 +9,9 @@
 		"test": "vue-cli-service test:unit"
 	},
 	"dependencies": {
+		"apollo-server": "^2.9.12",
+		"apollo-server-testing": "^2.9.12",
+		"canvas": "^2.5.0",
 		"core-js": "^3.1.2",
 		"graphql": "^14.5.8",
 		"vue": "^2.6.10",
@@ -43,7 +46,9 @@
 		},
 		"overrides": [
 			{
-				"files": [ "tests/**/*.spec.js" ],
+				"files": [
+					"tests/**/*.spec.js"
+				],
 				"env": {
 					"jest": true
 				}
