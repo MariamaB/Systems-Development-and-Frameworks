@@ -15,11 +15,12 @@ const typeDefs = gql `
 
 
   type Query {
-    todos: [Todo]
+    todos(orderBy: ORDERBY): [Todo]
     todo(id: Int): Todo
-    
+    Sorting(orderBy: ORDERBY): [Todo]
   }
-
+  
+  
   type Mutation {
     addTodo(id: Int!, message: String!, status:Boolean!,createdAt: String!): Todo
     removeTodo(id: Int!):[Todo]
@@ -30,9 +31,9 @@ const typeDefs = gql `
   }
   
 
-  enum orderBy {
-    asc
-    desc
+  enum ORDERBY {
+    ASC
+    DESC
 }
   
 `;
@@ -51,23 +52,47 @@ let todos = [{
         status: false,
         createdAt: d.getTime()+1,
     },
-];
  
-function Sorting()
-{
-  todos.sort(function(a,b){return b.createdAt - a.createdAt});
+];
+ORDERBY: {
+  ASC: 'ASC'
+  DESC: 'DESC'
+}
+function sortTodo(arr,orderBy){
+  let newArr = JSON.parse(JSON.stringify(arr));
+
+  if (orderBy === 'ASC') {
+      newArr.sort((a, b) => 
+        a.createdAt - b.createdAt);
+      return newArr;
+  }else{if (orderBy === 'DESC') {
+    newArr.sort((a, b) => 
+        b.createdAt - a.createdAt);
+    return newArr;
+
+  }};
+
+  
 }
 
 
 const resolvers = {
     Query: {
-        todos: () => todos,
+     
+       todos: ()  => todos,
         todo: (_,args) => todos.filter(e => e.id===args.id)[0],
+        Sorting: (parent, args, context, info)=> {
+        let newtodos = JSON.parse(JSON.stringify(todos));
+        return sortTodo(newtodos,args.orderBy);
+        
+        }
+
     },
 
     Mutation: {
         addTodo: (_, args) => {
           let newTodo ={
+
             id: Math.floor(Math.random()*10),
             message: args.message,
             status: args.status,
