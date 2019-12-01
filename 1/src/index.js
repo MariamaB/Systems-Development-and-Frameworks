@@ -7,7 +7,7 @@ var d = new Date();
 const typeDefs = gql `
  
   type Todo {
-    id: Int,
+    id: Int
     message: String
     status: Boolean
     createdAt: String
