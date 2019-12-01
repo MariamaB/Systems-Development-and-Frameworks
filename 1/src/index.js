@@ -81,7 +81,7 @@ const resolvers = {
      
        todos: ()  => todos,
         todo: (_,args) => todos.filter(e => e.id===args.id)[0],
-        Sorting: (parent, args, context, info)=> {
+        Sorting: (_, args)=> {
         let newtodos = JSON.parse(JSON.stringify(todos));
         return sortTodo(newtodos,args.orderBy);
         
