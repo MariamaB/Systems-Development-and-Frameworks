@@ -1,12 +1,11 @@
 const { ApolloServer, gql } = require('apollo-server');
-
 // A schema is a collection of type definitions (hence "typeDefs")
 // that together define the "shape" of queries that are executed against
 // your data.
 const typeDefs = gql `
 
   type Todo {
-    id: String,
+    id: Int,
     message: String
   }
 
@@ -15,19 +14,15 @@ const typeDefs = gql `
   }
 
   type Mutation {
-    addTodo(id: String!, message: String!): Todo
+    addTodo(message: String!, status:Boolean!): Todo
   }
   
 `;
 
-const todos = [{
-        id: 'Harry Potter and the Chamber of Secrets',
-        message: 'J.K. Rowling',
-    },
-    {
-        id: 'Jurassic Park',
-        message: 'Michael Crichton',
-    },
+const todos = [
+    { id: 1, message: "Foo" },
+    { id: 2, message: "Bar" },
+    { id: 3, message: "Baz" }
 ];
 
 
@@ -37,14 +32,24 @@ const resolvers = {
     },
 
     Mutation: {
-        addTodo: (parent, args) => args
+        addTodo: (_, args) => {
+            let newTodo = {
+
+                id: Math.floor(Math.random() * 10),
+                message: args.message,
+                status: args.status,
+                createdAt: (new Date).getTime()
+            };
+            todos.push(newTodo);
+            return newTodo;
+        },
     }
 
 
 };
 
-const server = new ApolloServer({ typeDefs, resolvers });
 
+const server = new ApolloServer({ typeDefs, resolvers });
 // The `listen` method launches a web server.
 server.listen().then(({ url }) => {
     // eslint-disable-next-line no-console
