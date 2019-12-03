@@ -1,14 +1,14 @@
-const express = require('express');
-const { ApolloServer } = require('apollo-server-express');
+
+const { ApolloServer } = require('apollo-server');
 const { createTestClient } = require('apollo-server-testing');
-const { gql } = require('apollo-server-express');
+const { gql } = require('apollo-server');
 
 const typeDefs = require('../../src/schema');
-const todos= require('../../src/database');
+
 const resolvers = require('../../src/resolvers');
 
 const server = new ApolloServer({ typeDefs, resolvers });
-const { query, mutate } = createTestClient(server);
+const {  mutate } = createTestClient(server);
 
 let variables
 
@@ -25,7 +25,7 @@ describe('mutate', () => {
           }`
         it('adds a new todo', ()=> {
             variables = { message: "adds a new todo" }
-            const expected = {
+            const newtodo = {
                 data: {
                     addTodo: {
                         id: expect.any(Number),
@@ -35,7 +35,7 @@ describe('mutate', () => {
                     }
                 }
             }
-             expect(mutate({ mutation: addTodo, variables })).resolves.toMatchObject(expected)
+             expect(mutate({ mutation: addTodo, variables })).resolves.toMatchObject(newtodo)
         })
     })
 })

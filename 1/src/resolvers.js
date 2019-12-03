@@ -1,9 +1,9 @@
 
-const todos = require('./database');
+let todos = require('./database');
 
-ORDERBY: {
-    ASC: 'ASC'
-    DESC: 'DESC'
+{
+    'ASC'
+    'DESC'
   }
   function sortTodo(arr,orderBy){
     let newArr = JSON.parse(JSON.stringify(arr));
@@ -17,7 +17,7 @@ ORDERBY: {
           b.createdAt - a.createdAt);
       return newArr;
   
-    }};
+    }}
   
     
   }
@@ -64,7 +64,7 @@ ORDERBY: {
                   message: args.message,
                 };
                 return newTodo              
-              };
+              }
               return e;
             });
             return newTodo;
@@ -81,7 +81,7 @@ ORDERBY: {
                   status: args.status,
                 };
                 return newTodo              
-              };
+              }
               return e;
             });
             return newTodo;
