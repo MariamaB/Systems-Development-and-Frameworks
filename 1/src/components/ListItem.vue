@@ -1,24 +1,36 @@
 <template>
   <li>
     <div class="itemContainer">
-      <span class="messageSection">
-        <span v-if="onEdit">
-          <input @input="changeMessage" />
-        </span>
-        <span v-else>{{message}}</span>
-      </span>
+      <div class="messageSection" style="display:inline-block;">
+        <template v-if="onEdit">
+          <input v-model="newTodo.message" />
+                  <select v-model="newTodo.assignedTo">
+                    <option></option>
+                  <option 
+                    :value="user.id" 
+                    :key="index"
+                     v-for="(user, index) in users"
+                     :selected="user.id === newTodo.assigendTo"
+                     >
+                     {{ user.email }}
+                     </option>
+                </select>
+                
+        </template>
+        <template v-else>{{todo.message}} - {{assignedToUser}}</template>
+      </div>
 
       <div class="mb5">
-        <span class="buttonContainer" v-if="!this.onEdit">
+        <span class="buttonContainer" v-if="!onEdit">
           <a @click="setEditMode(true)">
             <img title="Edit" class="icon" src="../assets/edit_circ.png" />
           </a>
           <span class="space" />
-          <a @click="deleteListItem(id)">
+          <a @click="deleteListItem(todo.id)">
             <img title="Delete" class="icon" src="../assets/delete_circ.png" />
           </a>
         </span>
-        <span class="buttonContainer" v-if="this.onEdit">
+        <span class="buttonContainer" v-if="onEdit">
           <a @click="saveChanges()">
             <img title="Save" class="icon" src="../assets/save_circ.png" />
           </a>
@@ -33,27 +45,39 @@
 </template>
 
 <script>
+import { clone } from 'lodash'
+
 export default {
   name: "list-item",
   props: {
-    id: Number,
-    message: String
+    users: {
+      type: Array,
+      required: true
+    },   
+    todo: {
+      type: Object,
+      required: true
+    }
   },
   data() {
     return {
       onEdit: false,
-      newMsg: ""
+      newTodo: {
+        message: '',
+        assignedTo: null
+      }
     };
   },
   methods: {
     setEditMode(value) {
+      if(value)
+        this.newTodo = clone(this.todo);
+        
       this.onEdit = value;
     },
     saveChanges() {
       this.setEditMode(false);
-
-      if (this.newMsg.trim().length === 0) alert("Enter sth");
-      else this.$emit("messageChanged", this.newMsg);
+      this.$emit("todoChanged", this.newTodo);
     },
     changeMessage(event) {
       this.newMsg = event.target.value;
@@ -61,6 +85,14 @@ export default {
     deleteListItem(id) {
       this.$emit("deleteListItem", id);
     }
+  },
+  computed: {
+     assignedToUser() {
+       /* eslint-disable */
+        console.log(this.todo.assignedTo)
+       let user = this.users.find((u) => u.id === this.todo.assignedTo);
+       return user === undefined ? "none" : user.email
+     }
   }
 };
 </script>

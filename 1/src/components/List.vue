@@ -8,12 +8,12 @@
       <ol v-if="todos.length">
         <list-item
           v-bind:key="item.id"
-          v-for="item in this.todos"
-          v-bind:id="item.id"
-          v-bind:message="item.message"
+          v-for="item in todos"
+          :todo="item"
           v-bind:onEdit="item.onEdit"
+          :users="users"
           @deleteListItem="deleteListItem($event)"
-          @messageChanged="editListItem(item.id, $event)"
+          @todoChanged="editListItem(item.id, $event)"
         ></list-item>
         <section>
         <input type="radio" v-bind:value="0" v-model="selectedRadioButton">resolve actions only in Frontend
@@ -48,12 +48,14 @@ export default {
         // { id: nextItemId++, message: "Bar" },
         // { id: nextItemId++, message: "Baz" }
       ],
+      users: [],
       selectedRadioButton: 1
     };
   },
   methods: {
     addItem() {
       const trimmedText = this.newItemText.trim();
+      let todo;
       if (trimmedText) {
         this.todos.push({
           id: nextItemId++,
@@ -63,38 +65,46 @@ export default {
       }
 
       if (this.selectedRadioButton === 1){
-        this.addTodo(trimmedText, true);
+        this.addTodo(todo);
       }
     },
-    editListItem(id, message) {
+    editListItem(id, todo) {
       this.todos.forEach(element => {
         if (element.id === id) {
-          element.message = message;
+          element = todo;
         }
       });
+
+       if (this.selectedRadioButton === 1){
+        this.addTodo(todo);
+      }
     },
     deleteListItem(id) {
       this.todos = this.todos.filter(element => element.id != id);
     },
 
 
-      async addTodo(msg, status ) {
+      async addTodo(todo) {
     // const result = 
     await this.$apollo.mutate({
       // Query
-      mutation: gql`mutation ( $message: String!, $status: Boolean!) {
-        addTodo( message: $message, status: $status) {
-          id
-          message
+      mutation: gql`mutation ( $message: String, $status: Boolean, $assignedTo: Int) {
+        addTodo( message: $message, status: $status, assignedTo: $assignedTo) {
+         id,
+         message,
+         status,
+         assignedTo
         }
       }`,
       // Parameters
       variables: {
-        message: msg,
-        status: status
+         message: todo.message, 
+         status: todo.status, 
+         assignedTo: todo.assignedTo
       },
     })
   },
+
   // async removeTodo(id) {
   //   await this.$apollo.mutate({
   //      mutation: gql`mutation ($id: Int!) {
@@ -113,6 +123,12 @@ export default {
       todos{
         id,
         message
+      }
+    }`,  
+    users: gql`query {
+      users{
+        id,
+        email
       }
     }`,
   }

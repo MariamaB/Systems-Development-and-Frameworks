@@ -7,9 +7,6 @@ Vue.config.productionTip = false;
 
 // Vue.use(BootstrapVue);
 
-// const fetchOptions = {
-//     mode: 'no-cors',
-// };
 
 new Vue({
     apolloProvider: createProvider(),
