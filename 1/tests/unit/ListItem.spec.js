@@ -6,7 +6,7 @@ describe('ListItem.vue', () => {
     it('render props.message when passed', () => {
         const message = 'new todo';
         const wrapper = shallowMount(ListItem, {
-            propsData: { message }
+            propsData: { todo: { message }, users: [] }
         });
         expect(wrapper.text()).toMatch(message);
     });
