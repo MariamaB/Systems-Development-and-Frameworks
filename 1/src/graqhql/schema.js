@@ -3,18 +3,20 @@ const { gql } = require('apollo-server');
 const typeDefs = gql `
  
   type Todo {
-    id: Int
+    id: String
     message: String
     status: Boolean
-    createdAt: String,
+    createdAt: String
     assignedTo: Int
   }
   
   type User {
-    id: Int,
-    email: String,
+    id: Int
+    email: String
     password: String
   }
+
+  
 
   type Query {
     todos(orderBy: ORDERBY): [Todo]

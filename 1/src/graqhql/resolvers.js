@@ -1,4 +1,5 @@
 let data = require('./database');
+const uuidv4 = require('uuid/v4');
 let todos = data.todos;
 let users = data.users;
 
@@ -46,7 +47,7 @@ const resolvers = {
         addTodo: (_, args) => {
             let newTodo = {
 
-                id: Math.floor(Math.random() * 10),
+                id: uuidv4(),
                 message: args.message,
                 status: false,
                 assignedTo: undefined,
