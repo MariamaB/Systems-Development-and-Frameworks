@@ -1,4 +1,3 @@
-
 const { ApolloServer } = require('apollo-server');
 const { createTestClient } = require('apollo-server-testing');
 const { gql } = require('apollo-server');
@@ -8,13 +7,13 @@ const typeDefs = require('../../src/schema');
 const resolvers = require('../../src/resolvers');
 
 const server = new ApolloServer({ typeDefs, resolvers });
-const {  mutate } = createTestClient(server);
+const { mutate } = createTestClient(server);
 
 let variables
 
 describe('mutate', () => {
     describe('addTodo', () => {
-        const addTodo = gql`
+        const addTodo = gql `
         mutation addTodo( $message: String!) {
             addTodo( message: $message) {
               id
@@ -23,8 +22,8 @@ describe('mutate', () => {
               createdAt
             }
           }`
-        it('adds a new todo', ()=> {
-            variables = { message: "adds a new todo" }
+        it('adds a new todo', () => {
+            variables = { todo: { message: "adds a new todo" } }
             const newtodo = {
                 data: {
                     addTodo: {
@@ -35,10 +34,7 @@ describe('mutate', () => {
                     }
                 }
             }
-             expect(mutate({ mutation: addTodo, variables })).resolves.toMatchObject(newtodo)
+            expect(mutate({ mutation: addTodo, variables })).resolves.toMatchObject(newtodo)
         })
     })
 })
-
-
-
