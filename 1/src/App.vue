@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <h1>Hello Vue.js</h1>
+    <!-- <h1>Hello Vue.js</h1> -->
     <login/>
     <list />
   </div>

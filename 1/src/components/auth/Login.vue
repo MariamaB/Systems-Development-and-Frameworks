@@ -1,6 +1,6 @@
 <template>
-<h3>Please enter your login details</h3>
   <div class="inputContainer" style="display:right">
+    <h3>Please enter your login details</h3>
       <form action="#" @submit.prevent="">
         <input type="email" placeholder="example@email.de" v-model="form.email" />
         <input type="password" placeholder="******" v-model="form.password" />
