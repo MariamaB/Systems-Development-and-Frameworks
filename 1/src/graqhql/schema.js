@@ -20,7 +20,7 @@ const typeDefs = gql `
 
   type Query {
     todos(orderBy: ORDERBY): [Todo]
-    todo(id: Int): Todo
+    todo(id: String): Todo
     Sorting(orderBy: ORDERBY): [Todo],
     user(email: String!, password: String ): User
     users: [User]
@@ -29,9 +29,9 @@ const typeDefs = gql `
   
   type Mutation {
     addTodo( message: String!): Todo
-    removeTodo(id: Int!):[Todo]
-    updateTodo(id: Int!, message: String, assignedTo: Int): Todo
-    changeTodoStatus(id: Int!, status:Boolean!):Todo
+    removeTodo(id: String!):[Todo]
+    updateTodo(id: String!, message: String, assignedTo: Int): Todo
+    changeTodoStatus(id: String!, status:Boolean!):Todo
     
    
   }
