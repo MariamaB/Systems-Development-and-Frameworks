@@ -5,19 +5,19 @@
         <template v-if="onEdit">
           <input v-model="newTodo.message" />
                   <select v-model="newTodo.assignedTo">
-                    <option></option>
+                    <option>assign to ...</option>
                   <option 
-                    :value="user.id" 
-                    :key="index"
                      v-for="(user, index) in users"
-                     :selected="user.id === newTodo.assigendTo"
+                    :key="index"
+                    :value="user.id" 
+                     :selected="user.id === newTodo.assignedTo"
                      >
                      {{ user.email }}
                      </option>
                 </select>
                 
         </template>
-        <template v-else>{{todo.message}} - {{assignedToUser}}</template>
+        <template v-else><span style="font-weight: bold;">{{todo.message}}</span>  - assignt to: {{assignedToUser}}</template>
       </div>
 
       <div class="mb5">
@@ -64,7 +64,8 @@ export default {
       onEdit: false,
       newTodo: {
         message: '',
-        assignedTo: null
+        assignedTo: null,
+        status: false
       }
     };
   },
@@ -90,6 +91,7 @@ export default {
      assignedToUser() {
        /* eslint-disable */
         console.log(this.todo.assignedTo)
+        console.log(this.newTodo.assignedTo)
        let user = this.users.find((u) => u.id === this.todo.assignedTo);
        return user === undefined ? "none" : user.email
      }

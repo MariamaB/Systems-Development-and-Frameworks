@@ -1,4 +1,5 @@
 <template>
+<h3>Please enter your login details</h3>
   <div class="inputContainer" style="display:right">
       <form action="#" @submit.prevent="">
         <input type="email" placeholder="example@email.de" v-model="form.email" />

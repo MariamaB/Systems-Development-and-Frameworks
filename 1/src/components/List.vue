@@ -146,7 +146,9 @@ export default {
     todos: gql`query {
       todos{
         id,
-        message
+        message,
+       assignedTo, 
+       status
       }
     }`,  
 
@@ -185,6 +187,6 @@ ol {
   flex: 2;
   display: flex;
   flex-direction: column;
-  width: 40%
+  width: 50%
 }
 </style>
