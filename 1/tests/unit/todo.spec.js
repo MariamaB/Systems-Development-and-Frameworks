@@ -23,7 +23,8 @@ describe('mutate', () => {
               createdAt
             }
           }`
-        it('adds a new todo', ()=> {
+        test('adds a new todo', ()=> {
+          
             variables = { message: "adds a new todo" }
             const newtodo = {
                 data: {
@@ -37,6 +38,37 @@ describe('mutate', () => {
             }
              expect(mutate({ mutation: addTodo, variables })).resolves.toMatchObject(newtodo)
         })
+        test('generates a random ID ', ()=> {
+       
+            variables = { message: "adds a new todo" }
+            const newtodo = {
+                data: {
+                    addTodo: {
+                        id: expect.any(Number),
+                        message: variables.message,
+                        status: false,
+                        createdAt: expect.any(String)
+                    }
+                }
+            }
+             expect(mutate({ mutation: addTodo, variables })).resolves.toMatchObject(newtodo)
+        })
+        test('initializes listItem as "not done yet"', ()=> {
+       
+            variables = { message: "adds a new todo" }
+            const newtodo = {
+                data: {
+                    addTodo: {
+                        id: expect.any(Number),
+                        message: variables.message,
+                        status: false,
+                        createdAt: expect.any(String)
+                    }
+                }
+            }
+             expect(mutate({ mutation: addTodo, variables })).resolves.toMatchObject(newtodo)
+        })
+    
     })
 })
 
