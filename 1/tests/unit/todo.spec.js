@@ -2,9 +2,9 @@ const { ApolloServer } = require('apollo-server');
 const { createTestClient } = require('apollo-server-testing');
 const { gql } = require('apollo-server');
 
-const typeDefs = require('../../src/schema');
+const typeDefs = require('../../src/graqhql/schema');
 
-const resolvers = require('../../src/resolvers');
+const resolvers = require('../../src/graqhql/resolvers');
 
 const server = new ApolloServer({ typeDefs, resolvers });
 const { mutate } = createTestClient(server);

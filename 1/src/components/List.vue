@@ -31,8 +31,7 @@
 import ListItem from "./ListItem.vue";
 import AddListItem from "./AddListItem.vue";
 import gql from 'graphql-tag'
-
-let nextItemId = 4;
+const uuidv4 = require('uuid/v4');
 
 export default {
   name: "list",
@@ -43,28 +42,24 @@ export default {
   data() {
     return {
       newItemText: "",
-      todos: [
-        // { id: nextItemId++, message: "Foo" },
-        // { id: nextItemId++, message: "Bar" },
-        // { id: nextItemId++, message: "Baz" }
-      ],
+      todos: [],
       users: [],
-      selectedRadioButton: 0
+      selectedRadioButton: 1
     };
   },
   methods: {
     addItem() {
       const trimmedText = this.newItemText.trim();
-      
+      //TODO pass id from server
       if (trimmedText) {
-        this.todos.push({
-          id: nextItemId++,
+      if (this.selectedRadioButton === 1){
+        this.addTodo(trimmedText)
+      } else {
+          this.todos.push({
+          id: uuidv4(),
           message: trimmedText
         });
         this.newItemText = "";
-
-      if (this.selectedRadioButton === 1){
-        this.addTodo(trimmedText);
       }
       }
     },
@@ -87,8 +82,7 @@ export default {
     },
 
 
-      async addTodo(message) {
-    // const result = 
+  async  addTodo(message) {
     await this.$apollo.mutate({
       // Query
       mutation: gql`mutation ($message: String!) {
@@ -103,13 +97,18 @@ export default {
       variables: {
          message: message, 
       },
-    })
+    }).then((data) => {
+                    this.todos.push(data.data.addTodo)
+                }).catch((error) => {
+                    return error;
+                })
+    
   }, 
   
   async updateTodo(id, message, assignedTo) {
     await this.$apollo.mutate({
       // Query
-      mutation: gql`mutation ($id: Int!, $message: String, $assignedTo: Int) {
+      mutation: gql`mutation ($id: String!, $message: String, $assignedTo: Int) {
         updateTodo(id: $id, message: $message, assignedTo: $assignedTo) {
           id
           message
@@ -128,7 +127,7 @@ export default {
   
   async removeTodo(id) {
     await this.$apollo.mutate({
-      mutation: gql`mutation ($id: Int!) {
+      mutation: gql`mutation ($id: String!) {
         removeTodo(id: $id) {
           id
         }
