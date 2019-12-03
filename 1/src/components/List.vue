@@ -49,23 +49,23 @@ export default {
         // { id: nextItemId++, message: "Baz" }
       ],
       users: [],
-      selectedRadioButton: 1
+      selectedRadioButton: 0
     };
   },
   methods: {
     addItem() {
       const trimmedText = this.newItemText.trim();
-      let todo;
+      
       if (trimmedText) {
         this.todos.push({
           id: nextItemId++,
           message: trimmedText
         });
         this.newItemText = "";
-      }
 
       if (this.selectedRadioButton === 1){
-        this.addTodo(todo);
+        this.addTodo(trimmedText);
+      }
       }
     },
     editListItem(id, todo) {
@@ -73,48 +73,72 @@ export default {
         if (element.id === id) {
           element = todo;
         }
-      });
 
-       if (this.selectedRadioButton === 1){
-        this.addTodo(todo);
+        if (this.selectedRadioButton === 1){
+        this.updateTodo(todo.id, todo.message, todo.assignedTo);
       }
+      });
     },
     deleteListItem(id) {
       this.todos = this.todos.filter(element => element.id != id);
+         if (this.selectedRadioButton === 1){
+        this.removeTodo(id);
+      }
     },
 
 
-      async addTodo(todo) {
+      async addTodo(message) {
     // const result = 
     await this.$apollo.mutate({
       // Query
-      mutation: gql`mutation ( $message: String, $status: Boolean, $assignedTo: Int) {
-        addTodo( message: $message, status: $status, assignedTo: $assignedTo) {
-         id,
-         message,
-         status,
-         assignedTo
+      mutation: gql`mutation ($message: String!) {
+        addTodo( message: $message) {
+          id
+          message
+          assignedTo
+          status
         }
       }`,
       // Parameters
       variables: {
-         message: todo.message, 
-         status: todo.status, 
-         assignedTo: todo.assignedTo
+         message: message, 
+      },
+    })
+  }, 
+  
+  async updateTodo(id, message, assignedTo) {
+    await this.$apollo.mutate({
+      // Query
+      mutation: gql`mutation ($id: Int!, $message: String, $assignedTo: Int) {
+        updateTodo(id: $id, message: $message, assignedTo: $assignedTo) {
+          id
+          message
+          assignedTo
+          status
+        }
+      }`,
+      // Parameters
+      variables: {
+         id: id, 
+         message: message, 
+         assignedTo: assignedTo, 
+      },
+    })
+  }, 
+  
+  async removeTodo(id) {
+    await this.$apollo.mutate({
+      mutation: gql`mutation ($id: Int!) {
+        removeTodo(id: $id) {
+          id
+        }
+      }`,
+      // Parameters
+      variables: {
+         id: id
       },
     })
   },
-
-  // async removeTodo(id) {
-  //   await this.$apollo.mutate({
-  //      mutation: gql`mutation ($id: Int!) {
-  //       addTag( message: $message, status: $status) {
-  //         id
-  //         message
-  //       }
-  //     }`,
-  //   })
-  // }
   },
 
   apollo: {
@@ -125,6 +149,7 @@ export default {
         message
       }
     }`,  
+
     users: gql`query {
       users{
         id,
