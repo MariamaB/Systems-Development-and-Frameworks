@@ -9,7 +9,7 @@
         "test": "vue-cli-service test:unit"
     },
     "dependencies": {
-        "apollo-server": "^2.9.9",
+        "apollo-server": "^2.6.4",
         "apollo-server-express": "^2.6.4",
         "apollo-server-testing": "^2.6.4",
         "canvas": "^2.5.0",
