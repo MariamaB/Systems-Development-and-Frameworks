@@ -1,4 +1,5 @@
 
+<<<<<<< Updated upstream
 const { ApolloServer } = require('apollo-server');
 const { createTestClient } = require('apollo-server-testing');
 const { gql } = require('apollo-server');
@@ -72,5 +73,7 @@ describe('mutate', () => {
     })
 })
 
+=======
+>>>>>>> Stashed changes
 
 
