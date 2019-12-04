@@ -1,17 +1,20 @@
 <template>
   <div id="app">
-    <h1>Hello Vue.js</h1>
+    <!-- <h1>Hello Vue.js</h1> -->
+    <login/>
     <list />
   </div>
 </template>
 
 <script>
 import List from "./components/List.vue";
+import Login from "./components/auth/Login.vue";
 
 export default {
   name: "app",
   components: {
-    List
+    List,
+    Login
   }
 };
 </script>
