@@ -31,7 +31,7 @@ const typeDefs = gql `
     addTodo( message: String!): Todo
     removeTodo(id: String!):[Todo]
     updateTodo(id: String!, message: String, assignedTo: Int): Todo
-    changeTodoStatus(id: String!, status:Boolean!):Todo
+    changeTodoStatus(id: String!):Todo
     
    
   }

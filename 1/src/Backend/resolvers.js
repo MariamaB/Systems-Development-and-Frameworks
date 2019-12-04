@@ -47,19 +47,22 @@ const resolvers = {
         addTodo: (_, args) => {
             let newTodo = {
 
-                id: uuidv4(),
+                id: (uuidv4().toString()),
                 message: args.message,
                 status: false,
                 assignedTo: undefined,
-                createdAt: (new Date).getTime()
+                createdAt: ((new Date).getTime().toString())
             };
             todos.push(newTodo);
             return newTodo;
         },
 
         removeTodo: (_, args) => {
-            todos = todos.filter(t => t.id != args.id);
-            return todos;
+            if(args.id != undefined && args.id != null){
+                todos = todos.filter(t => t.id != args.id);
+                return todos;
+            }
+            return;
         },
 
         updateTodo: (_, args) => {
@@ -81,17 +84,23 @@ const resolvers = {
         changeTodoStatus: (_, args) => {
             let newTodo;
             // changing the Todo
-            todos = todos.map(e => {
-                if (e.id === args.id) {
-                    newTodo = {
-                        ...e,
-                        status: args.status,
-                    };
-                    return newTodo
+            if(args.id != undefined && args.id != null){
+                todos = todos.map(e => {
+                    
+                        if (e.id === args.id) {
+                            newTodo = {
+                                ...e,
+                                status: true,
+                            };
+                            return newTodo
+                        }
+                        return e;
+                    });
+                    return newTodo;
+
                 }
-                return e;
-            });
-            return newTodo;
+                return;
+                
 
         },
     }
