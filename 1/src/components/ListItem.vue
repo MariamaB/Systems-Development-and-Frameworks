@@ -115,16 +115,13 @@ export default {
   },
   computed: {
      assignedToUser() {
-       /* eslint-disable */
-        console.log(this.todo.assignedTo)
-        console.log(this.newTodo.assignedTo)
        let user = this.users.find((u) => u.id === this.todo.assignedTo);
        return user === undefined ? "none" : user.email
      },
 
      checkLoggedInUser(){
       if(this.todo.assignedTo != null){
-        let user = this.users.find(u => u.id === this.todo.assignedTo);
+        let user = this.users.find(u => (u.id === this.todo.assignedTo));
         return user.loggedIn ? true : false;    
       }else{
         return false;
