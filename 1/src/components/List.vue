@@ -141,7 +141,6 @@ export default {
   },
 
   apollo: {
-    // Vue-Apollo options here
     todos: gql`query {
       todos{
         id,

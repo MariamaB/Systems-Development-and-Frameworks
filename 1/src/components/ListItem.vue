@@ -123,11 +123,12 @@ export default {
      },
 
      checkLoggedInUser(){
-       let user = this.users.find(u => u.id === this.todo.assignedTo);
-       
-       /* eslint-disable */
-        console.log('user: ' + user.loggedIn)
-       return (user.loggedIn === true)? true : false;
+      if(this.todo.assignedTo != null){
+        let user = this.users.find(u => u.id === this.todo.assignedTo);
+        return user.loggedIn ? true : false;    
+      }else{
+        return false;
+      }   
   }
   }
 };
