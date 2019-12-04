@@ -1,10 +1,12 @@
 <template>
   <div class="inputContainer" style="display:right">
-    <h3>Please enter your login details</h3>
+    <h3 v-if="loggedIn === false">Please enter your login details</h3>
+    <h3 v-else>Hello User</h3>
       <form action="#" @submit.prevent="">
         <input type="email" placeholder="example@email.de" v-model="form.email" />
         <input type="password" placeholder="******" v-model="form.password" />
-        <button type="submit">sign in</button>
+        <button type="submit" @click="login">sign in</button>
+        <!-- <button v-else type="submit" @click="logout">sign out</button> -->
     </form>
   </div>
 </template>
@@ -17,15 +19,57 @@ export default {
   props: {
   },
   methods: {
-      login(){
-
-      }
+      async login(){
+         await this.$apollo.mutate({
+      mutation: gql`mutation ($email: String!, $password: String!) {
+        login(email: $email, password: $password) {
+          id
+        }
+      }`,
+      // Parameters
+      variables: {
+         email: this.form.email,
+        password: this.form.password
+      },
+    }).then((data) => {
+                    if (data.data.login != null || data.data.login!= undefined) {
+                    this.loggedIn = true;
+                    this.id = data.data.login.id;
+                    }
+                    
+                }).catch((error) => {
+                    return error;
+                })
+      },
+      // async logout(){
+      //   await this.$apollo.mutate({
+      //     mutation: gql`mutation ($id: String!) {
+      //   logout(id: $id) {
+      //     id
+      //   }
+      // }`,
+      // // Parameters
+      // variables: {
+      //    id: this.id,
+      // },
+      //   }).then((data) => {
+      //               if (data.data.logout != null || data.data.logout!= undefined) {
+      //               this.loggedIn = false;
+      //               this.id = '';
+      //               }
+                    
+      //           }).catch((error) => {
+      //               return error;
+      //           })
+      // }
   },
   data() {
       return{
           form:{
               email:'',
-            password:''}
+            password:''},
+            loggedIn: false,
+            id:''
       }
   },
 
@@ -33,8 +77,10 @@ export default {
     // Vue-Apollo options here
     users: gql`query {
       user{
+        id,
         email,
-        password
+        # password,
+        loggedIn
       }
     }`,
   }

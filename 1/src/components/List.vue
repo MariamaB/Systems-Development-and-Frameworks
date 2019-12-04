@@ -82,7 +82,7 @@ export default {
     },
 
 
-  async  addTodo(message) {
+  async addTodo(message) {
     await this.$apollo.mutate({
       // Query
       mutation: gql`mutation ($message: String!) {
@@ -141,7 +141,6 @@ export default {
   },
 
   apollo: {
-    // Vue-Apollo options here
     todos: gql`query {
       todos{
         id,
@@ -154,7 +153,8 @@ export default {
     users: gql`query {
       users{
         id,
-        email
+        email,
+        loggedIn
       }
     }`,
   }
