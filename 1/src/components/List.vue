@@ -82,7 +82,7 @@ export default {
     },
 
 
-  async  addTodo(message) {
+  async addTodo(message) {
     await this.$apollo.mutate({
       // Query
       mutation: gql`mutation ($message: String!) {
@@ -154,7 +154,8 @@ export default {
     users: gql`query {
       users{
         id,
-        email
+        email,
+        loggedIn
       }
     }`,
   }

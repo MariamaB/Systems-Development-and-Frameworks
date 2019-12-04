@@ -20,7 +20,7 @@
         <template v-else><span style="font-weight: bold;">{{todo.message}}</span>  - assignt to: {{assignedToUser}}</template>
       </div>
 
-      <div class="mb5">
+      <div class="mb5 space">
         <span class="buttonContainer" v-if="!onEdit">
           <a @click="setEditMode(true)">
             <img title="Edit" class="icon" src="../assets/edit_circ.png" />
@@ -40,12 +40,17 @@
           </a>
         </span>
       </div>
+      <div v-if="checkLoggedInUser">
+        <a v-if="this.todo.status" ><img title="Done" class="icon" src="../assets/done.png" /></a>
+        <a v-else @click="setTodoDone"><img title="Done_Pending" class="icon" src="../assets/done_pending.png" /></a>
+      </div>
     </div>
   </li>
 </template>
 
 <script>
 import { clone } from 'lodash'
+import gql from 'graphql-tag'
 
 export default {
   name: "list-item",
@@ -85,7 +90,28 @@ export default {
     },
     deleteListItem(id) {
       this.$emit("deleteListItem", id);
-    }
+    },
+    async setTodoDone(){
+      await this.$apollo.mutate({
+      mutation: gql`mutation ($id: String!, $status: Boolean!) {
+        changeTodoStatus(id: $id, status: $status) {
+          status
+        }
+      }`,
+      // Parameters
+      variables: {
+        id: this.todo.id,
+         status: true,
+      },
+    }).then((data) => {
+                    if (data.data.changeTodoStatus != null || data.data.changeTodoStatus!= undefined) {
+                    this.todo.status = data.data.changeTodoStatus.status;
+                    }
+                    
+                }).catch((error) => {
+                    return error;
+                })
+      },
   },
   computed: {
      assignedToUser() {
@@ -94,7 +120,15 @@ export default {
         console.log(this.newTodo.assignedTo)
        let user = this.users.find((u) => u.id === this.todo.assignedTo);
        return user === undefined ? "none" : user.email
-     }
+     },
+
+     checkLoggedInUser(){
+       let user = this.users.find(u => u.id === this.todo.assignedTo);
+       
+       /* eslint-disable */
+        console.log('user: ' + user.loggedIn)
+       return (user.loggedIn === true)? true : false;
+  }
   }
 };
 </script>
