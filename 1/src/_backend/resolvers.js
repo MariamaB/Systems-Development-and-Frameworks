@@ -2,6 +2,7 @@ let data = require('./database');
 const uuidv4 = require('uuid/v4');
 let todos = data.todos;
 let users = data.users;
+let sessions = data.sessions;
 
 {
     'ASC'
@@ -35,6 +36,7 @@ const resolvers = {
         todo: (_, args) => todos.filter(e => e.id === args.id)[0],
         users: () => users,
         user: (_, args) => users.filter(e => e.email === args.email)[0],
+        session: (_, args) => sessions.filter(e => e.id === args.id),
         Sorting: (_, args) => {
             let newtodos = JSON.parse(JSON.stringify(todos));
             return sortTodo(newtodos, args.orderBy);
@@ -47,22 +49,19 @@ const resolvers = {
         addTodo: (_, args) => {
             let newTodo = {
 
-                id: (uuidv4().toString()),
+                id: uuidv4(),
                 message: args.message,
                 status: false,
-                assignedTo: undefined,
-                createdAt: ((new Date).getTime().toString())
+                assignedTo: 0,
+                createdAt: (new Date).getTime()
             };
             todos.push(newTodo);
             return newTodo;
         },
 
         removeTodo: (_, args) => {
-            if(args.id != undefined && args.id != null){
-                todos = todos.filter(t => t.id != args.id);
-                return todos;
-            }
-            return;
+            todos = todos.filter(t => t.id != args.id);
+            return todos;
         },
 
         updateTodo: (_, args) => {
@@ -72,7 +71,7 @@ const resolvers = {
                 if (e.id === args.id) {
                     newTodo = {...e }
                     newTodo.message = (args.message != null || args.message != undefined) ? args.message : e.message;
-                    newTodo.assignedTo = (args.assignedTo != null || args.assignedTo != undefined) ? args.assignedTo : e.assignedTo;
+                    newTodo.assignedTo = (args.assignedTo != 0) ? args.assignedTo : e.assignedTo;
 
                     return newTodo
                 }
@@ -84,25 +83,36 @@ const resolvers = {
         changeTodoStatus: (_, args) => {
             let newTodo;
             // changing the Todo
-            if(args.id != undefined && args.id != null){
-                todos = todos.map(e => {
-                    
-                        if (e.id === args.id) {
-                            newTodo = {
-                                ...e,
-                                status: true,
-                            };
-                            return newTodo
-                        }
-                        return e;
-                    });
-                    return newTodo;
-
+            todos = todos.map(e => {
+                if (e.id === args.id) {
+                    newTodo = {
+                        ...e,
+                        status: args.status,
+                    };
+                    return newTodo
                 }
-                return;
-                
+                return e;
+            });
+            return newTodo;
 
         },
+        login: (_, args) => {
+            if ((users.some(u => u.email === args.email && u.password === args.password)) ? true : false) {
+                users.map(u => (u.email === args.email) ? u.loggedIn = true : u.loggedIn = false)
+                let session = { id: uuidv4() };
+                sessions.push(session);
+                return session;
+            }
+        },
+
+        logout: (_, args) => {
+            users.map(u => (u.id === args.id) ? u.loggedIn = false : u.loggedIn)
+            sessions.pop;
+
+            return users.filter(u => u.id === args.id && u.loggedIn === false)
+
+
+        }
     }
 
 

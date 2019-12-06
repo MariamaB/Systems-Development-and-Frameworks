@@ -120,7 +120,7 @@ export default {
      },
 
      checkLoggedInUser(){
-      if(this.todo.assignedTo != null){
+      if(this.todo.assignedTo != 0){
         let user = this.users.find(u => (u.id === this.todo.assignedTo));
         return user.loggedIn ? true : false;    
       }else{
