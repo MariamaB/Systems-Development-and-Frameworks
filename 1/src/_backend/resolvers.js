@@ -69,7 +69,7 @@ const resolvers = {
             todos = todos.map(e => {
 
                 if (e.id === args.id) {
-                    newTodo = {...e }
+                    newTodo = { ...e }
                     newTodo.message = (args.message != null || args.message != undefined) ? args.message : e.message;
                     newTodo.assignedTo = (args.assignedTo != 0) ? args.assignedTo : e.assignedTo;
 
@@ -101,6 +101,7 @@ const resolvers = {
                 users.map(u => (u.email === args.email) ? u.loggedIn = true : u.loggedIn = false)
                 let session = { id: uuidv4() };
                 sessions.push(session);
+
                 return session;
             }
         },

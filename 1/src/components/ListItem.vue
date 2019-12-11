@@ -1,23 +1,23 @@
-<template>
+  <template>
   <li>
     <div class="itemContainer">
       <div class="messageSection" style="display:inline-block;">
         <template v-if="onEdit">
           <input v-model="newTodo.message" />
-                  <select v-model="newTodo.assignedTo">
-                    <option>assign to ...</option>
-                  <option 
-                     v-for="(user, index) in users"
-                    :key="index"
-                    :value="user.id" 
-                     :selected="user.id === newTodo.assignedTo"
-                     >
-                     {{ user.email }}
-                     </option>
-                </select>
-                
+          <select v-model="newTodo.assignedTo">
+            <option>assign to ...</option>
+            <option
+              v-for="(user, index) in users"
+              :key="index"
+              :value="user.id"
+              :selected="user.id === newTodo.assignedTo"
+            >{{ user.email }}</option>
+          </select>
         </template>
-        <template v-else><span style="font-weight: bold;">{{todo.message}}</span>  - assignt to: {{assignedToUser}}</template>
+        <template v-else>
+          <span style="font-weight: bold;">{{todo.message}}</span>
+          - assignt to: {{assignedToUser}}
+        </template>
       </div>
 
       <div class="mb5 space">
@@ -41,16 +41,20 @@
         </span>
       </div>
       <div v-if="checkLoggedInUser">
-        <a v-if="this.todo.status" ><img title="Done" class="icon" src="../assets/done.png" /></a>
-        <a v-else @click="setTodoDone"><img title="Done_Pending" class="icon" src="../assets/done_pending.png" /></a>
+        <a v-if="this.todo.status">
+          <img title="Done" class="icon" src="../assets/done.png" />
+        </a>
+        <a v-else @click="setTodoDone">
+          <img title="Done_Pending" class="icon" src="../assets/done_pending.png" />
+        </a>
       </div>
     </div>
   </li>
 </template>
 
-<script>
-import { clone } from 'lodash'
-import gql from 'graphql-tag'
+  <script>
+import { clone } from "lodash";
+import gql from "graphql-tag";
 
 export default {
   name: "list-item",
@@ -58,7 +62,7 @@ export default {
     users: {
       type: Array,
       required: true
-    },   
+    },
     todo: {
       type: Object,
       required: true
@@ -68,7 +72,7 @@ export default {
     return {
       onEdit: false,
       newTodo: {
-        message: '',
+        message: "",
         assignedTo: null,
         status: false
       }
@@ -76,9 +80,8 @@ export default {
   },
   methods: {
     setEditMode(value) {
-      if(value)
-        this.newTodo = clone(this.todo);
-        
+      if (value) this.newTodo = clone(this.todo);
+
       this.onEdit = value;
     },
     saveChanges() {
@@ -91,47 +94,51 @@ export default {
     deleteListItem(id) {
       this.$emit("deleteListItem", id);
     },
-    async setTodoDone(){
-      await this.$apollo.mutate({
-      mutation: gql`mutation ($id: String!, $status: Boolean!) {
-        changeTodoStatus(id: $id, status: $status) {
-          status
-        }
-      }`,
-      // Parameters
-      variables: {
-        id: this.todo.id,
-         status: true,
-      },
-    }).then((data) => {
-                    if (data.data.changeTodoStatus != null || data.data.changeTodoStatus!= undefined) {
-                    this.todo.status = data.data.changeTodoStatus.status;
-                    }
-                    
-                }).catch((error) => {
-                    return error;
-                })
-      },
+    async setTodoDone() {
+      await this.$apollo
+        .mutate({
+          mutation: gql`
+            mutation($id: String!, $status: Boolean!) {
+              changeTodoStatus(id: $id, status: $status) {
+                status
+              }
+            }
+          `,
+          // Parameters
+          variables: {
+            id: this.todo.id,
+            status: true
+          }
+        })
+        .then(data => {
+          if (
+            data.data.changeTodoStatus != null ||
+            data.data.changeTodoStatus != undefined
+          ) {
+            this.todo.status = data.data.changeTodoStatus.status;
+          }
+        })
+        .catch(error => {
+          return error;
+        });
+    }
   },
   computed: {
-     assignedToUser() {
-       let user = this.users.find((u) => u.id === this.todo.assignedTo);
-       return user === undefined ? "none" : user.email
-     },
+    assignedToUser() {
+      let user = this.users.find(u => u.id === this.todo.assignedTo);
+      return user === undefined ? "none" : user.email;
+    },
 
-     checkLoggedInUser(){
-      if(this.todo.assignedTo != 0){
-        let user = this.users.find(u => (u.id === this.todo.assignedTo));
-        return user.loggedIn ? true : false;    
-      }else{
-        return false;
-      }   
-  }
+    checkLoggedInUser() {
+      if (this.todo.assignedTo === 0) return false;
+      let user = this.users.find(u => u.id === this.todo.assignedTo);
+      return user && user.loggedIn;
+    }
   }
 };
 </script>
 
-<style>
+  <style>
 .itemContainer {
   border-bottom-style: inset;
   margin-bottom: 20px;
