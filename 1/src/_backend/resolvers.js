@@ -96,7 +96,7 @@ const resolvers = {
             return newTodo;
 
         },
-        login: async (_, args) => {
+        login: (_, args) => {
             if ((users.some(u => u.email === args.email && u.password === args.password)) ? true : false) {
                 users.map(u => (u.email === args.email) ? u.loggedIn = true : u.loggedIn = false)
                 let session = { id: uuidv4() };
