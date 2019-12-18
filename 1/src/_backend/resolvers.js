@@ -99,6 +99,7 @@ const resolvers = {
 
         },
         login: (_, args) => {
+            let jwt;
             if ((users.some(u => u.email === args.email && u.password === args.password)) ? true : false) {
                 users.map(u => (u.email === args.email) ? u.loggedIn = true : u.loggedIn = false)
                 // let session = { id: uuidv4() };
@@ -106,7 +107,9 @@ const resolvers = {
 
                 // console.log("encode return: " + encode({ email: args.email, password: args.password }))
 
-                return encode({ email: args.email, password: args.password });
+                jwt = { jwt: encode({ email: args.email, password: args.password }) }
+
+                return jwt;
 
 
 

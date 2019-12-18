@@ -24,7 +24,7 @@ export default {
         mutation: gql`
           mutation($email: String!, $password: String!) {
             login(email: $email, password: $password) {
-              jwt: $jwt
+              jwt
             }
           }
         `,
