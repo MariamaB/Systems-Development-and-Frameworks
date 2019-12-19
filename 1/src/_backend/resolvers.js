@@ -1,3 +1,5 @@
+const { neo4jgraphql } = require ('neo4j-graphql-js');
+
 let data = require('./database');
 const uuidv4 = require('uuid/v4');
 let todos = data.todos;
@@ -31,10 +33,13 @@ function sortTodo(arr, orderBy) {
 
 const resolvers = {
     Query: {
-
-        todos: () => todos,
+        
+        
+        todos: neo4jgraphql,
         todo: (_, args) => todos.filter(e => e.id === args.id)[0],
-        users: () => users,
+        users: (object, params, context, info) => {
+            return context.db.usersByEmail(params.email);
+          },
         user: (_, args) => users.filter(e => e.email === args.email)[0],
         session: (_, args) => sessions.filter(e => e.id === args.id),
         Sorting: (_, args) => {
