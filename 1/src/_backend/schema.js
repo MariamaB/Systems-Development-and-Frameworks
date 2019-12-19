@@ -1,9 +1,8 @@
 const { gql } = require('apollo-server');
 const { makeAugmentedSchema }= require( 'neo4j-graphql-js');
-
 //import resolvers from './resolvers';
 const typeDefs = `
- 
+
   type Todo {
     id: String!
     message: String

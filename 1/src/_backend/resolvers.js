@@ -1,6 +1,7 @@
 
-const encode = require('./jwt/encode');
 const { neo4jgraphql } = require ('neo4j-graphql-js');
+
+const encode = require('./jwt/encode');
 
 let data = require('./database');
 const uuidv4 = require('uuid/v4');
