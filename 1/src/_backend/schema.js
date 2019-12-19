@@ -1,13 +1,18 @@
 const { gql } = require('apollo-server');
+const { makeAugmentedSchema }= require( 'neo4j-graphql-js');
 
-const typeDefs = gql`
+//import resolvers from './resolvers';
+const typeDefs = `
  
   type Todo {
     id: String!
     message: String
     status: Boolean
     createdAt: String
-    assignedTo: Int
+    assignedTo: [User] @relation(name: "ASSIGNED_TO", direction: "OUT")
+    
+        
+
   }
   
   type User {
@@ -15,6 +20,7 @@ const typeDefs = gql`
     email: String!
     password: String,
     loggedIn: Boolean,
+    tasks: [Todo] @relation(name: "ASSIGNED_TO", direction:"IN")
   }
 
   type Admin {
@@ -54,6 +60,9 @@ type JWebtoken {
     ASC
     DESC
 }
-  
+
 `;
-module.exports = typeDefs;
+module.exports  = makeAugmentedSchema({
+  typeDefs: typeDefs
+  //resolvers,
+}); 
