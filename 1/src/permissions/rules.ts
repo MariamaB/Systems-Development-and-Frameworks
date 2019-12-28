@@ -1,5 +1,5 @@
-import { rule, and, or, not } from 'graphql-shield'
-import { Context, getUserEmail } from '../utils'
+/**import { rule, and, or, not } from 'graphql-shield'
+import { Context, getUserEmail } from '../_backend/database'
 
 export const isAdmin = rule()(async (parent, args, ctx: Context, info) => {
   const email = getUserEmail(ctx)
@@ -15,4 +15,4 @@ export const isUser = rule()(
   },
 )
 
-export const isAuthenticated = or(isUser, isAdmin)
+export const isAuthenticated = or(isUser, isAdmin)*/
