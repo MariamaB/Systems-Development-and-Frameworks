@@ -109,8 +109,6 @@ const resolvers = {
 
                 return { jwt: encode({ email: args.email, password: args.password }) }
 
-                return jwt;
-
 
 
             }
