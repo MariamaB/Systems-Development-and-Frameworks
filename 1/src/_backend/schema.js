@@ -1,6 +1,6 @@
 const { gql } = require('apollo-server');
 
-const typeDefs = gql `
+const typeDefs = gql`
  
   type Todo {
     id: String!
@@ -23,9 +23,11 @@ const typeDefs = gql `
   password: String
 }
 
-type Session {
-  id: String!
+type JWebtoken {
+  jwt: String
 }
+
+
 
   type Query {
     todos(orderBy: ORDERBY): [Todo]
@@ -33,7 +35,6 @@ type Session {
     Sorting(orderBy: ORDERBY): [Todo],
     user(email: String!, password: String ): User
     users: [User]
-    session(id:String!): Session
   }
   
   
@@ -42,7 +43,7 @@ type Session {
     removeTodo(id: String!):[Todo]
     updateTodo(id: String!, message: String, assignedTo: Int): Todo
     changeTodoStatus(id: String!, status:Boolean!):Todo
-    login(email: String!, password:String!):Session
+    login(email: String!, password:String!): JWebtoken
     logout(id: String): User
     
    
