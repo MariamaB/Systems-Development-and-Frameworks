@@ -107,7 +107,7 @@ const resolvers = {
 
                 // console.log("encode return: " + encode({ email: args.email, password: args.password }))
 
-                jwt = { jwt: encode({ email: args.email, password: args.password }) }
+                return { jwt: encode({ email: args.email, password: args.password }) }
 
                 return jwt;
 
