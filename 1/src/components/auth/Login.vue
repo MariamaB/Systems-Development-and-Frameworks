@@ -20,7 +20,7 @@ export default {
   methods: {
     async login() {
       console.log("Login mutation started");
-      const data = await this.$apollo.mutate({
+      const { dta: { login } } = await this.$apollo.mutate({
         mutation: gql`
           mutation($email: String!, $password: String!) {
             login(email: $email, password: $password) {
