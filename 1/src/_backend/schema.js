@@ -1,6 +1,7 @@
-const { gql } = require('apollo-server');
-const { makeAugmentedSchema }= require( 'neo4j-graphql-js');
-//import resolvers from './resolvers';
+// const { gql } = require('apollo-server');
+const { makeAugmentedSchema } = require('neo4j-graphql-js');
+const resolvers = require('./resolvers');
+// const { permissions } = require('./permissions/rules');
 const typeDefs = `
 
   type Todo {
@@ -32,6 +33,11 @@ type JWebtoken {
   jwt: String
 }
 
+type LoginResponse {
+  email: String
+  token: String
+  isLoggedIn: Boolean
+}
 
 
   type Query {
@@ -48,7 +54,7 @@ type JWebtoken {
     removeTodo(id: String!):[Todo]
     updateTodo(id: String!, message: String, assignedTo: Int): Todo
     changeTodoStatus(id: String!, status:Boolean!):Todo
-    login(email: String!, password:String!): JWebtoken
+    login(email: String!, password:String!): LoginResponse
     logout(id: String): User
     
    
@@ -61,7 +67,7 @@ type JWebtoken {
 }
 
 `;
-module.exports  = makeAugmentedSchema({
-  typeDefs: typeDefs
-  //resolvers,
-}); 
+module.exports = makeAugmentedSchema({
+    typeDefs,
+    resolvers,
+});
