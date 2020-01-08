@@ -3,7 +3,7 @@ const { neo4jgraphql } = require ('neo4j-graphql-js');
 
 const encode = require('./jwt/encode');
 
-let data = require('./database');
+let data = require('../../src/_backend/seeds');
 const uuidv4 = require('uuid/v4');
 let todos = data.todos;
 let users = data.users;
@@ -38,10 +38,12 @@ const resolvers = {
     Query: {
         
         
-        todos: neo4jgraphql,
+        todos(object, params, ctx, resolveInfo) {
+            return neo4jgraphql(object, params, ctx, resolveInfo);
+          },
         todo: (_, args) => todos.filter(e => e.id === args.id)[0],
-        users: (object, params, context, info) => {
-            return context.db.usersByEmail(params.email);
+        users(object, params, ctx, resolveInfo) {
+            return neo4jgraphql(object, params, ctx, resolveInfo);
           },
         user: (_, args) => users.filter(e => e.email === args.email)[0],
 

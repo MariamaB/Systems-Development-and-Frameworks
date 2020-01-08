@@ -1,3 +1,13 @@
 module.exports = {
-	presets: [ '@vue/cli-plugin-babel/preset' ]
+	presets: [ [
+		"@babel/preset-env",
+		{
+		  "targets": {
+			"node": "10"
+		  }
+		}
+	  ]
+	],
+	"plugins": [
+	  "@babel/plugin-proposal-throw-expressions" ]
 };

@@ -1,4 +1,4 @@
-const { gql } = require('apollo-server');
+//const { gql } = require('apollo-server');
 const { makeAugmentedSchema }= require( 'neo4j-graphql-js');
 //import resolvers from './resolvers';
 const typeDefs = `
@@ -8,9 +8,7 @@ const typeDefs = `
     message: String
     status: Boolean
     createdAt: String
-    assignedTo: [User] @relation(name: "ASSIGNED_TO", direction: "OUT")
-    
-        
+    assignedTo: [User] @relation(name: "ASSIGNED_TO", direction: "OUT")     
 
   }
   
@@ -21,6 +19,7 @@ const typeDefs = `
     loggedIn: Boolean,
     tasks: [Todo] @relation(name: "ASSIGNED_TO", direction:"IN")
   }
+  
 
   type Admin {
   id: Int!
@@ -35,7 +34,7 @@ type JWebtoken {
 
 
   type Query {
-    todos(orderBy: ORDERBY): [Todo]
+    todos(orderBy: ORDERBY): [Todo] 
     todo(id: String): Todo
     Sorting(orderBy: ORDERBY): [Todo],
     user(email: String!, password: String ): User
