@@ -1,7 +1,6 @@
 // const { gql } = require('apollo-server');
 const { makeAugmentedSchema } = require('neo4j-graphql-js');
 const resolvers = require('./resolvers');
-// const { permissions } = require('./permissions/rules');
 const typeDefs = `
 
   type Todo {
