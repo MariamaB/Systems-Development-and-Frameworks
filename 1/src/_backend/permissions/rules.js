@@ -1,76 +1,53 @@
-const { rule, shield, deny, allow } = require('graphql-shield')
+const { rule, shield, deny, allow, or } = require('graphql-shield')
+
+const isAdmin = rule({ cache: 'contextual' })(
+        async(parent, args, { user }) => {
+            // console.log('isAdmin', user.role);
+            return user && user.role === 'admin'
+        },
+    )
+    // const itsMe = rule({ cache: 'contextual' })(
+    //     async(parent, args, { user }) => {
+    //         // const result = await resolve(root, args, context, info)
+    //         // console.log('itsMe', result.assignedTo.id);
+    //         return user && user.role === 'admin'
+    //     },
+    // )
 
 const isAuthenticated = rule({ cache: 'contextual' })(
-    async(parent, args, ctx, info) => {
+    async(parent, args, ctx) => {
+        console.log('authenticated', ctx.user.email);
         return ctx.user !== null
     },
 )
 
+const isAssignedTo = rule({ cache: 'contextual' })(
+    async(resolve, root, args, context, info) => {
+        const result = await resolve(root, args, context, info)
+        console.log('isAssignedTo')
+        result.filter(t => t.assignedTo === context.user.id)
+        return result
+    },
+)
+
+
+
 const permissions = shield({
     Query: {
         '*': deny,
-        todos: isAuthenticated,
-        users: deny
+        todos: or(isAdmin, isAssignedTo),
+        users: isAdmin
     },
     Mutation: {
+        assignTodo: isAdmin,
         login: allow,
-        changeTodoStatus: isAuthenticated,
         addTodo: isAuthenticated,
+        updateTodo: isAuthenticated,
+        changeTodoStatus: isAuthenticated,
         removeTodo: deny,
     }
 })
 
 
-/****************************************************** */
-
-// const schema = require('./../schema');
-// const { applyMiddleware } = require('graphql-middleware')
-
-// const permissions = async(resolve, root, args, context, info) => {
-//     console.log(`1. logInput: ${JSON.stringify(args)}`)
-//     const result = await resolve(root, args, context, info)
-//     console.log(`5. logInput`)
-//     return result
-
-// }
-/****************************************************** */
-
 
 module.exports = permissions;
-
-
-// module.exports = applyMiddleware(schema, permissions);
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// export const isAdmin = rule()(async (parent, args, ctx: Context, info) => {
-//   const email = getUserEmail(ctx)
-//   // Is there a Grocer with such email in our database (Prisma)?
-//   return ctx.db.exists.Admin({ email })
-// })
-
-// export const isUser = rule()(
-//   async (parent, args, ctx: Context, info) => {
-//     const email = getUserEmail(ctx)
-//     // Is there a Customer with such email in our database (Prisma)?
-//     return ctx.db.exists.User({ email })
-//   },
-// )
-
-// export const isAuthenticated = or(isUser, isAdmin)

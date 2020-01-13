@@ -1,4 +1,4 @@
-const { neo4jgraphql } = require('neo4j-graphql-js');
+const { neo4jgraphql, AuthenticationError } = require('neo4j-graphql-js');
 const encode = require('./jwt/encode');
 // let data = require('./database');
 const uuidv4 = require('uuid/v4');
@@ -32,9 +32,8 @@ function sortTodo(arr, orderBy) {
 
 const resolvers = {
     Query: {
-        // todos: neo4jgraphql,
         todos(object, params, ctx, info) {
-            console.log('User: ' + ctx.user);
+            console.log('User: ' + ctx.user.email);
             return neo4jgraphql(object, params, ctx, info);
         },
         todo: (_, args) => todos.filter(e => e.id === args.id)[0],
@@ -70,22 +69,58 @@ const resolvers = {
             todos = todos.filter(t => t.id != args.id);
             return todos;
         },
+        assignTodo: async(_, args, ctx) => {
+            let todo;
+            const { assignedTo } = args
+            delete args.assignedTo
+            console.log('args', args)
+            console.log(assignedTo)
+            const session = ctx.driver.session();
 
-        updateTodo: (_, args) => {
-            let newTodo;
-            todos = todos.map(e => {
-
-                if (e.id === args.id) {
-                    newTodo = {...e }
-                    newTodo.message = (args.message != null || args.message != undefined) ? args.message : e.message;
-                    newTodo.assignedTo = (args.assignedTo != 0) ? args.assignedTo : e.assignedTo;
-
-                    return newTodo
-                }
-                return e;
-            });
-            return newTodo;
-
+            try {
+                const updatedTodo = await session.run(
+                    `
+                    MATCH (todo:Todo{id: $args.id}) 
+                    MATCH (user:User{id: $userId}) 
+                    MERGE (todo)-[:ASSIGNED_TO]->(user) 
+                    SET todo.assignedTo = $userId
+                    RETURN todo
+                `, { args, userId: assignedTo }
+                );
+                [todo] = await updatedTodo.records.map(record => {
+                    return record.get("todo").properties;
+                });
+                console.log('todo', todo)
+            } catch (e) {
+                console.error(e);
+            } finally {
+                await session.close();
+            }
+            return todo;
+        },
+        updateTodo: async(_, args, ctx) => {
+            let todo;
+            const { message } = args
+            console.log('args', args)
+            const session = ctx.driver.session();
+            try {
+                const updatedTodo = await session.run(
+                    `
+                    MATCH (todo:Todo{id: $args.id}) 
+                    SET todo.message = $message
+                    RETURN todo
+                `, { args, message }
+                );
+                [todo] = await updatedTodo.records.map(record => {
+                    return record.get("todo").properties;
+                });
+                console.log('todo', todo)
+            } catch (e) {
+                console.error(e);
+            } finally {
+                await session.close();
+            }
+            return todo;
         },
         changeTodoStatus: (_, args) => {
             let newTodo;
@@ -107,7 +142,7 @@ const resolvers = {
             const session = ctx.driver.session();
             try {
                 const result = await session.run(
-                    "MATCH (user:User) WHERE user.email = $email RETURN user LIMIT 25", {
+                    "MATCH (user:User) WHERE user.email = $email RETURN user", {
                         email: params.email
                     }
                 );
@@ -120,10 +155,10 @@ const resolvers = {
                     return {
                         token: token,
                         email: user.email,
-                        isLoggedIn: true
+                        role: user.role
                     };
                 } else {
-                    //   throw new AuthenticationError("There is no such user, you fool!");
+                    throw new AuthenticationError("No such user");
                 }
             } finally {
                 await session.close();
