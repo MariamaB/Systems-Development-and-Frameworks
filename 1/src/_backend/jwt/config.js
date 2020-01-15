@@ -10,8 +10,8 @@ const requiredConfigs = {
     GRAPHQL_URI: 'http://localhost:4000',
     NEO4J_USERNAME: 'graphql',
     NEO4J_PASSWORD: 'graphql',
-    // NEO4J_URI: 'bolt://localhost:7687'
-    NEO4J_URI: 'bolt://107.170.69.23:7687',
+    NEO4J_URI: 'bolt://localhost:7687'
+        // NEO4J_URI: 'bolt://107.170.69.23:7687',
 }
 
 
