@@ -187,26 +187,8 @@ const resolvers = {
                 await session.close();
             }
         },
-
-        // login: (_, args) => {
-        //     // let jwt;
-        //     if ((users.some(u => u.email === args.email && u.password === args.password)) ? true : false) {
-        //         users.map(u => (u.email === args.email) ? u.loggedIn = true : u.loggedIn = false)
-        //             // let session = { id: uuidv4() };
-        //             // sessions.push(session);
-
-        //         // console.log("encode return: " + encode({ email: args.email, password: args.password }))
-
-        //         return { jwt: encode({ email: args.email, password: args.password }) }
-
-
-
-        //     }
-        // },
-
         logout: (_, args) => {
             users.map(u => (u.id === args.id) ? u.loggedIn = false : u.loggedIn)
-                //  sessions.pop;
 
             return users.filter(u => u.id === args.id && u.loggedIn === false)
 

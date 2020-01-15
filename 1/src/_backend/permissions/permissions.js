@@ -2,7 +2,6 @@ const { rule, shield, deny, allow } = require('graphql-shield')
 
 const isAdmin = rule({ cache: 'contextual' })(
     async(parent, args, { user }) => {
-        console.log('Admin check', user.role)
         return user && user.role === 'admin'
     },
 )
@@ -13,7 +12,7 @@ const isAuthenticated = rule({ cache: 'contextual' })(
     },
 )
 
-const permissions = shield({
+const rules = shield({
     Query: {
         '*': deny,
         todos: isAuthenticated,
@@ -29,7 +28,7 @@ const permissions = shield({
     }
 })
 
-const middleware = {
+const middlewares = {
     Query: {
         todos: async(resolve, root, args, context, info) => {
             let result = await resolve(root, args, context, info)
@@ -49,4 +48,4 @@ const middleware = {
     }
 }
 
-module.exports = { permissions, middleware };
+module.exports = { rules, middlewares };

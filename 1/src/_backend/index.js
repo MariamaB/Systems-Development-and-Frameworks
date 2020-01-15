@@ -1,8 +1,8 @@
 const { ApolloServer } = require('apollo-server');
 const schema = require('./schema');
 const decode = require('./jwt/decode');
-const { permissions } = require('./permissions/rules');
-const { middleware } = require('./permissions/rules');
+const { rules } = require('./permissions/permissions');
+const { middlewares } = require('./permissions/permissions');
 const { applyMiddleware } = require('graphql-middleware');
 const neo4j = require('neo4j-driver').v1;
 const { NEO4J_URI, NEO4J_USERNAME, NEO4J_PASSWORD } = require('./jwt/config');
@@ -13,7 +13,7 @@ let driver = neo4j.driver(
 );
 
 
-const schemaWithMiddleware = applyMiddleware(schema, permissions, middleware);
+const schemaWithMiddleware = applyMiddleware(schema, rules, middlewares);
 
 const server = new ApolloServer({
     schema: schemaWithMiddleware,
