@@ -46,7 +46,7 @@ type LoginResponse {
   
   type Mutation {
     addTodo( message: String!): Todo
-    removeTodo(id: ID!):[Todo]
+    removeTodo(id: ID!):Todo
     updateTodo(id: ID!, message: String): Todo
     assignTodo(id: ID!, assignedTo: ID): Todo
     changeTodoStatus(id: ID!, status:Boolean!):Todo

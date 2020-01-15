@@ -38,7 +38,6 @@ const resolvers = {
         },
         todo: (_, args) => todos.filter(e => e.id === args.id)[0],
         users(object, params, ctx, info) {
-            console.log('info: ' + info);
             return neo4jgraphql(object, params, ctx, info);
         },
         user: (_, args) => users.filter(e => e.email === args.email)[0],
@@ -52,29 +51,50 @@ const resolvers = {
     },
 
     Mutation: {
-        addTodo: (_, args) => {
-            let newTodo = {
+        addTodo: async(_, args, ctx) => {
+            let todo;
+            const session = ctx.driver.session();
+            try {
+                const newTodo = await session.run(
+                    `
+                    CREATE (todo:Todo { id: $id, message: $message, status: false, createdAt: $date, assignedTo: 0})
+                    RETURN todo
+                `, { message: args.message, date: (new Date).getTime(), id: uuidv4() }
+                );
 
-                id: uuidv4(),
-                message: args.message,
-                status: false,
-                assignedTo: 0,
-                createdAt: (new Date).getTime()
-            };
-            todos.push(newTodo);
-            return newTodo;
+                [todo] = await newTodo.records.map(record => {
+                    return record.get("todo").properties;
+                });
+                console.log('todo', todo)
+            } catch (e) {
+                console.error(e);
+            } finally {
+                await session.close();
+            }
+            return todo;
         },
 
-        removeTodo: (_, args) => {
-            todos = todos.filter(t => t.id != args.id);
-            return todos;
+        removeTodo: async(_, args, ctx) => {
+            const session = ctx.driver.session();
+            try {
+                await session.run(
+                    `
+                    MATCH (todo:Todo {id: $id}) DELETE todo RETURN todo
+                `, { id: args.id }
+                );
+
+            } catch (e) {
+                console.error(e);
+            } finally {
+                await session.close();
+            }
+
+            return args;
         },
         assignTodo: async(_, args, ctx) => {
             let todo;
             const { assignedTo } = args
-            delete args.assignedTo
-            console.log('args', args)
-            console.log(assignedTo)
+            // delete args.assignedTo
             const session = ctx.driver.session();
 
             try {
@@ -101,7 +121,6 @@ const resolvers = {
         updateTodo: async(_, args, ctx) => {
             let todo;
             const { message } = args
-            console.log('args', args)
             const session = ctx.driver.session();
             try {
                 const updatedTodo = await session.run(
@@ -114,7 +133,6 @@ const resolvers = {
                 [todo] = await updatedTodo.records.map(record => {
                     return record.get("todo").properties;
                 });
-                console.log('todo', todo)
             } catch (e) {
                 console.error(e);
             } finally {
@@ -122,21 +140,26 @@ const resolvers = {
             }
             return todo;
         },
-        changeTodoStatus: (_, args) => {
-            let newTodo;
-            // changing the Todo
-            todos = todos.map(e => {
-                if (e.id === args.id) {
-                    newTodo = {
-                        ...e,
-                        status: args.status,
-                    };
-                    return newTodo
-                }
-                return e;
-            });
-            return newTodo;
-
+        changeTodoStatus: async(_, args, ctx) => {
+            let todo;
+            const session = ctx.driver.session();
+            try {
+                const updatedTodo = await session.run(
+                    `
+                    MATCH (todo:Todo{id: $id}) 
+                    SET todo.status = $status
+                    RETURN todo
+                `, { status: args.status, id: args.id }
+                );
+                [todo] = await updatedTodo.records.map(record => {
+                    return record.get("todo").properties;
+                });
+            } catch (e) {
+                console.error(e);
+            } finally {
+                await session.close();
+            }
+            return todo;
         },
         login: async(object, params, ctx) => {
             const session = ctx.driver.session();
