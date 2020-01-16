@@ -38,9 +38,10 @@ const resolvers = {
     Query: {
         
         
-        todos(object, params, ctx, resolveInfo) {
-            return neo4jgraphql(object, params, ctx, resolveInfo);
-          },
+       todos:{ assignedTo(obj, params, ctx, resolveInfo) {
+            return `${obj.email}`;
+          }
+        } , 
         todo: (_, args) => todos.filter(e => e.id === args.id)[0],
         users(object, params, ctx, resolveInfo) {
             return neo4jgraphql(object, params, ctx, resolveInfo);

@@ -8,9 +8,9 @@ var d = new Date();
         { id: 3, email: "baz@example.com", password: "1234", loggedIn: false},
     ];
    let  todos= [
-        { id: '1', message: "Foo", status: false, createdAt: d.getTime(), assignedTo: users[1]},
-        { id: '2', message: "Bar", status: false, createdAt: d.getTime(), assignedTo: users[2]},
-        { id: '3', message: "Baz", status: false, createdAt: d.getTime(), assignedTo: users[3]}
+        { id: '1', message: "Foo", status: false, createdAt: d.getTime(), assignedTo:""},
+        { id: '2', message: "Bar", status: false, createdAt: d.getTime(), assignedTo:""},
+        { id: '3', message: "Baz", status: false, createdAt: d.getTime(), assignedTo:""}
     ];
    
 
