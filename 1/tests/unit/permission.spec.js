@@ -86,19 +86,14 @@ describe('Test permission layer', () => {
                 password: "1234"
             }
         });
-        console.log('Log Message!!!!')
-        console.log('user', JSON.stringify(res.data.login, null, 1))
         token = res.data.login.token
     })
 
 
     it('token should be any string ', () => {
-        // console.log('token', JSON.stringify(token, null, 1))
         expect(token).toStrictEqual(expect.any(String));
     });
 
-
-    // login(email: "foo@example.com", password: "1234")
     it('Should be Array', async() => {
         let res = await query({
             query: todos,
@@ -106,20 +101,20 @@ describe('Test permission layer', () => {
         expect(res.data.todos).toBeInstanceOf(Array);
     });
 
-    it('Should be Array', async() => {
-        let res = await mutate({
+    it('Assigned user email should be foo@example.com', async() => {
+        await mutate({
             mutation: assignTo,
             variables: {
                 id: "1",
-                assignedTo: 1
+                assignedTo: "1"
             }
         })
 
-        let todosRes = await query({
+        let res = await query({
             query: todos,
         })
-        expect(res.data.todos).toBeInstanceOf(Array);
 
+        expect(res.data.todos[0].assignedTo.email).toBe("foo@example.com");
     });
 
 })

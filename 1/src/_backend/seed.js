@@ -18,9 +18,11 @@ const driver = neo4j.driver(
             'CREATE (user2:User { id: "2", email: "bar@example.com", password: "1234", role: "user"})',
             'CREATE (user3:User { id: "3", email: "baz@example.com", password: "1234", role: "user"})',
 
+
             'CREATE (todo1:Todo { id: "1", message: "Foo", status: false, createdAt: "01-01-2020", assignedTo: 0})',
             'CREATE (todo2:Todo { id: "2", message: "Bar", status: false, createdAt: "01-01-2020", assignedTo: 0})',
-            'CREATE (todo3:Todo { id: "3", message: "Baz", status: false, createdAt: "01-01-2020", assignedTo: 0})'
+            'CREATE (todo3:Todo { id: "3", message: "Baz", status: false, createdAt: "01-01-2020", assignedTo: 0})',
+
         ].map(statement => session.run(statement)));
 
         console.log("Data was successfully seeded!");
@@ -30,6 +32,7 @@ const driver = neo4j.driver(
         process.exit(1);
     } finally {
         await session.close();
+
 
         process.exit(0);
     }

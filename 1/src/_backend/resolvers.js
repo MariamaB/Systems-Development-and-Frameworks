@@ -93,8 +93,9 @@ const resolvers = {
         },
         assignTodo: async(_, args, ctx) => {
             let todo;
+            let user;
             const { assignedTo } = args
-            // delete args.assignedTo
+            delete args.assignedTo
             const session = ctx.driver.session();
 
             try {
@@ -104,12 +105,18 @@ const resolvers = {
                     MATCH (user:User{id: $userId}) 
                     MERGE (todo)-[:ASSIGNED_TO]->(user) 
                     SET todo.assignedTo = $userId
-                    RETURN todo
+                    RETURN user, todo
                 `, { args, userId: assignedTo }
                 );
                 [todo] = await updatedTodo.records.map(record => {
                     return record.get("todo").properties;
                 });
+
+                [user] = await updatedTodo.records.map(record => {
+                    return record.get("user").properties;
+                });
+
+                todo.assignedTo = user;
                 console.log('todo', todo)
             } catch (e) {
                 console.error(e);

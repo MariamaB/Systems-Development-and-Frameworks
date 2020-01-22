@@ -31,7 +31,7 @@ type JWebtoken {
 type LoginResponse {
   email: String
   role: UserGroup!
-  token: String
+  token: String!
 }
 
 
