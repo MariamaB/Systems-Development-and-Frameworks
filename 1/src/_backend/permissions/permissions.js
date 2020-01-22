@@ -16,7 +16,7 @@ const rules = shield({
     Query: {
         '*': deny,
         todos: isAuthenticated,
-        users: isAdmin,
+        users: isAuthenticated,
     },
     Mutation: {
         login: allow,
