@@ -21,16 +21,16 @@
         "neo4j-driver": "^1.7.6",
         "neo4j-graphql-js": "^2.9.3",
         "uuid": "^3.3.3",
-        "vue": "^2.6.10",
+        "vue": "2.6",
         "vue-apollo": "^3.0.0-beta.11",
-        "vue-mc": "^0.6.0"
+        "vue-mc": "^0.6.0",
+        "vuex": "^3.1.2"
     },
     "devDependencies": {
         "@babel/core": "^7.7.7",
         "@babel/node": "^7.7.7",
         "@babel/preset-env": "^7.7.7",
         "@vue/cli-plugin-babel": "^4.0.0",
-        "@vue/cli-plugin-eslint": "^4.0.0",
         "@vue/cli-plugin-unit-jest": "^4.0.5",
         "@vue/cli-service": "^4.0.0",
         "@vue/test-utils": "^1.0.0-beta.29",
@@ -43,7 +43,7 @@
         "nodemon": "^2.0.2",
         "vue-cli-plugin-apollo": "^0.21.3",
         "vue-jest": "^3.0.5",
-        "vue-template-compiler": "^2.6.10"
+        "vue-template-compiler": "2.6"
     },
     "eslintConfig": {
         "root": true,
@@ -79,15 +79,5 @@
     "browserslist": [
         "> 1%",
         "last 2 versions"
-    ],
-    "presets": [
-        [
-            "@babel/preset-env",
-            {
-                "targets": {
-                    "node": "10"
-                }
-            }
-        ]
     ]
 }

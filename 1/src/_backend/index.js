@@ -18,7 +18,8 @@ const schemaWithMiddleware = applyMiddleware(schema, rules, middlewares);
 const server = new ApolloServer({
     schema: schemaWithMiddleware,
     context: ({ req }) => {
-        const token = req.headers.authorization;
+        let authorization = req.headers.authorization;
+        const token = authorization ? authorization.split(" ").filter(t => t.length > 10)[0] : authorization;
         return {
             user: decode(token),
             driver
@@ -34,6 +35,4 @@ server.listen({ port }).then(({ url }) => {
     console.log(`🚀  Server ready at ${url}`);
 });
 
-
-//await driver.close();
 module.exports = driver;

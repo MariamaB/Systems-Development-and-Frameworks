@@ -1,6 +1,5 @@
 const { neo4jgraphql, AuthenticationError } = require('neo4j-graphql-js');
 const encode = require('./jwt/encode');
-// let data = require('./database');
 const uuidv4 = require('uuid/v4');
 let todos = neo4jgraphql;
 let users = neo4jgraphql;
@@ -78,7 +77,7 @@ const resolvers = {
             const session = ctx.driver.session();
             try {
                 await session.run(
-                    `
+                    `   
                     MATCH (todo:Todo {id: $id}) DELETE todo RETURN todo
                 `, { id: args.id }
                 );

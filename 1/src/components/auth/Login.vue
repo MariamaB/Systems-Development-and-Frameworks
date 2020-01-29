@@ -1,7 +1,7 @@
 <template>
   <div class="inputContainer" style="display:right">
-    <h3 v-if="loggedIn === false">Please enter your login details</h3>
-    <h3 v-else>Hello User</h3>
+    <h3 v-if="!this.token">Please enter your login details</h3>
+    <h3 v-else>Hello {{this.email}}</h3>
     <form action="#" @submit.prevent>
       <input type="email" placeholder="example@email.de" v-model="form.email" />
       <input type="password" placeholder="******" v-model="form.password" />
@@ -13,18 +13,22 @@
 
 <script>
 import gql from "graphql-tag";
-
 export default {
   name: "login",
   props: {},
   methods: {
     async login() {
       console.log("Login mutation started");
-      const { dta: { login } } = await this.$apollo.mutate({
+
+        localStorage.setItem('apollo-token',"")
+        localStorage.setItem('me',"")
+      const { data } = await this.$apollo.mutate({
         mutation: gql`
           mutation($email: String!, $password: String!) {
             login(email: $email, password: $password) {
-              jwt
+              email
+              role
+              token
             }
           }
         `,
@@ -33,26 +37,21 @@ export default {
           email: this.form.email,
           password: this.form.password
         }
-      });
-      console.log("Before if");
-      if (data.data.login != null || data.data.login != undefined) {
+      },
+      );
+        const {login} = data;
+      console.log("Before if", login);
+      if (login) {
+        this.id = login.id;
         this.loggedIn = true;
-        this.id = data.data.login.id;
+
+        localStorage.setItem('apollo-token', login.token)
+        localStorage.setItem('me', login.email)
+        localStorage.setItem('role', login.role)
+        
       }
-      console.log("Before await");
-      const userData = await this.$apollo.query({
-        query: gql`
-          query {
-            users {
-              id
-              email
-              loggedIn
-            }
-          }
-        `
-      });
-      console.log(userData);
-    }
+    },
+  },
     // async logout(){
     //   await this.$apollo.mutate({
     //     mutation: gql`mutation ($id: String!) {
@@ -74,7 +73,7 @@ export default {
     //               return error;
     //           })
     // }
-  },
+
   data() {
     return {
       form: {
@@ -82,22 +81,10 @@ export default {
         password: ""
       },
       loggedIn: false,
-      id: ""
-    };
+      id: "",
+      email: localStorage.getItem('me'),
+      token: localStorage.getItem('apollo-token'),
+    }
   },
-
-  apollo: {
-    // Vue-Apollo options here
-    users: gql`
-      query {
-        users {
-          id
-          email
-          # password,
-          loggedIn
-        }
-      }
-    `
-  }
 };
 </script>

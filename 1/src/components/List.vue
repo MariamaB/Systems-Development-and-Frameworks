@@ -13,13 +13,9 @@
           v-bind:onEdit="item.onEdit"
           :users="users"
           @deleteListItem="deleteListItem($event)"
-          @todoChanged="editListItem(item.id, $event)"
+          @todoChanged="updateTodo(item.id, $event)"
+          @assign="assignTodo(item.id, $event)"
         ></list-item>
-        <section>
-          <input type="radio" v-bind:value="0" v-model="selectedRadioButton" />resolve actions only in Frontend
-          <br />
-          <input type="radio" v-bind:value="1" v-model="selectedRadioButton" />resolve actions in backend
-        </section>
       </ol>
       <p v-else>Nothing left in the list. Add a new todo in the input aside.</p>
     </div>
@@ -30,7 +26,6 @@
 import ListItem from "./ListItem.vue";
 import AddListItem from "./AddListItem.vue";
 import gql from "graphql-tag";
-const uuidv4 = require("uuid/v4");
 
 export default {
   name: "list",
@@ -51,33 +46,11 @@ export default {
       const trimmedText = this.newItemText.trim();
       //TODO pass id from server
       if (trimmedText) {
-        if (this.selectedRadioButton === 1) {
           this.addTodo(trimmedText);
-        } else {
-          this.todos.push({
-            id: uuidv4(),
-            message: trimmedText
-          });
-          this.newItemText = "";
-        }
       }
-    },
-    editListItem(id, todo) {
-      this.todos.forEach(element => {
-        if (element.id === id) {
-          element = todo;
-        }
-
-        if (this.selectedRadioButton === 1) {
-          this.updateTodo(todo.id, todo.message, todo.assignedTo);
-        }
-      });
     },
     deleteListItem(id) {
-      this.todos = this.todos.filter(element => element.id != id);
-      if (this.selectedRadioButton === 1) {
         this.removeTodo(id);
-      }
     },
 
     async addTodo(message) {
@@ -89,42 +62,59 @@ export default {
               addTodo(message: $message) {
                 id
                 message
-                assignedTo
                 status
+                assignedTo{
+                  id
+                  email
+                }
               }
             }
           `,
-          // Parameters
           variables: {
             message: message
           }
-        })
-        .then(data => {
-          this.todos.push(data.data.addTodo);
-        })
-        .catch(error => {
-          return error;
         });
     },
 
-    async updateTodo(id, message, assignedTo) {
+    async assignTodo(id, todo) {
       await this.$apollo.mutate({
         // Query
         mutation: gql`
-          mutation($id: String!, $message: String, $assignedTo: Int) {
-            updateTodo(id: $id, message: $message, assignedTo: $assignedTo) {
+          mutation($id: ID!, $assignedTo: ID) {
+            assignTodo(id: $id, assignedTo: $assignedTo) {
               id
               message
-              assignedTo
+              assignedTo{
+                email
+              }
               status
             }
           }
         `,
-        // Parameters
         variables: {
           id: id,
-          message: message,
-          assignedTo: assignedTo
+          assignedTo: todo.assignedTo.id
+        }
+      });
+    },
+      async updateTodo(id, todo) {
+      await this.$apollo.mutate({
+        // Query
+        mutation: gql`
+          mutation($id: ID!, $message: String) {
+            updateTodo(id: $id, message: $message) {
+              id
+              message
+              assignedTo{
+                email
+              }
+              status
+            }
+          }
+        `,
+        variables: {
+          id: id,
+          message: todo.message,
         }
       });
     },
@@ -132,13 +122,12 @@ export default {
     async removeTodo(id) {
       await this.$apollo.mutate({
         mutation: gql`
-          mutation($id: String!) {
+          mutation($id: ID!) {
             removeTodo(id: $id) {
               id
             }
           }
         `,
-        // Parameters
         variables: {
           id: id
         }
@@ -152,8 +141,11 @@ export default {
         todos {
           id
           message
-          assignedTo
           status
+          assignedTo{
+            id
+            email
+          }
         }
       }
     `,
@@ -163,7 +155,6 @@ export default {
         users {
           id
           email
-          loggedIn
         }
       }
     `
