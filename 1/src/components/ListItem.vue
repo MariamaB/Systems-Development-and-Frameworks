@@ -4,19 +4,20 @@
       <div class="messageSection" style="display:inline-block;">
         <template v-if="onEdit">
           <input v-model="newTodo.message" />
-          <select v-model="newTodo.assignedTo">
+          <select v-if="isAdmin" 
+          v-model="newTodo.assignedTo">
             <option>assign to ...</option>
             <option
               v-for="(user, index) in users"
               :key="index"
-              :value="user.id"
-              :selected="user.id === newTodo.assignedTo"
+              :value="user"
+              :selected="user.id === newTodo.assignedTo.id"
             >{{ user.email }}</option>
           </select>
         </template>
         <template v-else>
           <span style="font-weight: bold;">{{todo.message}}</span>
-          - assignt to: {{assignedToUser}}
+          - assigned to  : {{assignedToUser}}
         </template>
       </div>
 
@@ -40,8 +41,8 @@
           </a>
         </span>
       </div>
-      <div v-if="checkLoggedInUser">
-        <a v-if="this.todo.status">
+      <div>
+        <a v-if="todo.status">
           <img title="Done" class="icon" src="../assets/done.png" />
         </a>
         <a v-else @click="setTodoDone">
@@ -70,6 +71,7 @@ export default {
   },
   data() {
     return {
+      isAdmin: (localStorage.getItem('role') === 'admin')? true : false,
       onEdit: false,
       newTodo: {
         message: "",
@@ -81,12 +83,20 @@ export default {
   methods: {
     setEditMode(value) {
       if (value) this.newTodo = clone(this.todo);
-
+      this.newTodo.assignedTo = !this.newTodo.assignedTo? {id: 0, email: '', role: ''} : this.newTodo.assignedTo;
       this.onEdit = value;
     },
     saveChanges() {
+      
+      console.log("HAAALLO")
       this.setEditMode(false);
-      this.$emit("todoChanged", this.newTodo);
+      if(this.todo.message !== this.newTodo.message){
+        this.$emit("todoChanged", this.newTodo);
+      }
+      
+      if (this.newTodo.assignedTo.id != 0 && this.todo.assignedTo != this.newTodo.assignedTo){
+        this.$emit("assign", this.newTodo);
+        }
     },
     changeMessage(event) {
       this.newMsg = event.target.value;
@@ -95,45 +105,33 @@ export default {
       this.$emit("deleteListItem", id);
     },
     async setTodoDone() {
-      await this.$apollo
-        .mutate({
+      console.log(this.todo.id)
+      const { data } = await this.$apollo.mutate({
           mutation: gql`
-            mutation($id: String!, $status: Boolean!) {
+            mutation($id: ID!, $status: Boolean!) {
               changeTodoStatus(id: $id, status: $status) {
                 status
               }
             }
           `,
-          // Parameters
           variables: {
             id: this.todo.id,
             status: true
           }
-        })
-        .then(data => {
-          if (
-            data.data.changeTodoStatus != null ||
-            data.data.changeTodoStatus != undefined
-          ) {
-            this.todo.status = data.data.changeTodoStatus.status;
-          }
-        })
-        .catch(error => {
-          return error;
-        });
+        }); 
+        const {changeTodoStatus} = data;
+        console.log("changeTodoStatus",changeTodoStatus)
+        this.todo.status = (changeTodoStatus) ?  changeTodoStatus.status : this.todo.status;
     }
   },
   computed: {
     assignedToUser() {
-      let user = this.users.find(u => u.id === this.todo.assignedTo);
+      let user
+      if(this.todo.assignedTo){
+        user = this.users.find(u => u.id === this.todo.assignedTo.id);
+      }
       return user === undefined ? "none" : user.email;
     },
-
-    checkLoggedInUser() {
-      if (this.todo.assignedTo === 0) return false;
-      let user = this.users.find(u => u.id === this.todo.assignedTo);
-      return user && user.loggedIn;
-    }
   }
 };
 </script>
