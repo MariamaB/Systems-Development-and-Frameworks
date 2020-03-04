@@ -1,6 +1,9 @@
 
+const { neo4jgraphql } = require ('neo4j-graphql-js');
+
 const encode = require('./jwt/encode');
-let data = require('./database');
+
+let data = require('../../src/_backend/seeds');
 const uuidv4 = require('uuid/v4');
 let todos = data.todos;
 let users = data.users;
@@ -33,10 +36,16 @@ function sortTodo(arr, orderBy) {
 
 const resolvers = {
     Query: {
-
-        todos: () => todos,
+        
+        
+       todos:{ assignedTo(obj, params, ctx, resolveInfo) {
+            return `${obj.email}`;
+          }
+        } , 
         todo: (_, args) => todos.filter(e => e.id === args.id)[0],
-        users: () => users,
+        users(object, params, ctx, resolveInfo) {
+            return neo4jgraphql(object, params, ctx, resolveInfo);
+          },
         user: (_, args) => users.filter(e => e.email === args.email)[0],
 
         Sorting: (_, args) => {

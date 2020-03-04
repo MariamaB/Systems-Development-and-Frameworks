@@ -9,15 +9,15 @@ const {
     JWT_SECRET,
     PRIVATE_KEY_PASSPHRASE,
 
-    NEO4J_URI = 'bolt://localhost:7687',
+  /*   NEO4J_URI = 'bolt://localhost:7687',
     NEO4J_USERNAME = 'neo4j',
-    NEO4J_PASSWORD = 'neo4j',
+    NEO4J_PASSWORD = 'neo4j', */
     GRAPHQL_PORT = 4000,
     CLIENT_URI = 'http://localhost:8080',
     GRAPHQL_URI = 'http://localhost:4000',
 } = process.env
 
-module.exports = requiredConfigs = {
+var requiredConfigs = {
     MAPBOX_TOKEN,
     JWT_SECRET,
     PRIVATE_KEY_PASSPHRASE,
@@ -32,4 +32,4 @@ module.exports = requiredConfigs = {
 module.exports = {
     ...requiredConfigs,
 
-}
+} 

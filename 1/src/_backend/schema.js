@@ -1,13 +1,16 @@
-const { gql } = require('apollo-server');
+//const { gql } = require('apollo-server');
+const { makeAugmentedSchema }= require( 'neo4j-graphql-js');
+const resolvers = require ('./resolvers');
+const typeDefs = `
 
-const typeDefs = gql`
- 
   type Todo {
     id: String!
     message: String
     status: Boolean
     createdAt: String
-    assignedTo: Int
+    assignedTo: [User] @relation(name: "ASSIGNED_TO", direction: "IN")  
+                       @cypher(statement: """ MERGE (:Todo)<-[a:ASSIGNED_TO]-(:User) RETURN a ORDER by a DESC LIMIT 2""")   
+
   }
   
   type User {
@@ -15,7 +18,10 @@ const typeDefs = gql`
     email: String!
     password: String,
     loggedIn: Boolean,
+    tasks: [Todo] @relation(name: "ASSIGNED_TO", direction:"OUT")
+                 
   }
+  
 
   type Admin {
   id: Int!
@@ -54,6 +60,9 @@ type JWebtoken {
     ASC
     DESC
 }
-  
+
 `;
-module.exports = typeDefs;
+const schema = makeAugmentedSchema({
+  typeDefs, resolvers
+ })
+module.exports = schema;
