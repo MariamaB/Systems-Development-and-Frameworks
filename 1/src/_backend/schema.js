@@ -1,37 +1,43 @@
-const { gql } = require('apollo-server');
+// const { gql } = require('apollo-server');
+const { makeAugmentedSchema } = require('neo4j-graphql-js');
+const resolvers = require('./resolvers');
+const typeDefs = `
 
-const typeDefs = gql`
- 
   type Todo {
-    id: String!
+    id: ID!
     message: String
     status: Boolean
     createdAt: String
-    assignedTo: Int
+    assignedTo: User @relation(name: "ASSIGNED_TO", direction: "OUT")
   }
   
   type User {
-    id: Int!
+    id: ID!
     email: String!
     password: String,
-    loggedIn: Boolean,
+    role: UserGroup!
+    tasks: [Todo] @relation(name: "ASSIGNED_TO", direction:"IN")
   }
 
-  type Admin {
-  id: Int!
-  email: String!
-  password: String
-}
+  enum UserGroup {
+    admin
+    user
+  }
 
 type JWebtoken {
   jwt: String
 }
 
+type LoginResponse {
+  email: String
+  role: UserGroup!
+  token: String!
+}
 
 
   type Query {
     todos(orderBy: ORDERBY): [Todo]
-    todo(id: String): Todo
+    todo(id: ID): Todo
     Sorting(orderBy: ORDERBY): [Todo],
     user(email: String!, password: String ): User
     users: [User]
@@ -40,11 +46,12 @@ type JWebtoken {
   
   type Mutation {
     addTodo( message: String!): Todo
-    removeTodo(id: String!):[Todo]
-    updateTodo(id: String!, message: String, assignedTo: Int): Todo
-    changeTodoStatus(id: String!, status:Boolean!):Todo
-    login(email: String!, password:String!): JWebtoken
-    logout(id: String): User
+    removeTodo(id: ID!):Todo
+    updateTodo(id: ID!, message: String): Todo
+    assignTodo(id: ID!, assignedTo: ID): Todo
+    changeTodoStatus(id: ID!, status:Boolean!):Todo
+    login(email: String!, password:String!): LoginResponse
+    logout(id: ID): User
     
    
   }
@@ -54,6 +61,9 @@ type JWebtoken {
     ASC
     DESC
 }
-  
+
 `;
-module.exports = typeDefs;
+module.exports = makeAugmentedSchema({
+    typeDefs,
+    resolvers,
+});

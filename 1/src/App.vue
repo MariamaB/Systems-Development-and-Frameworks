@@ -16,7 +16,9 @@ export default {
     List,
     Login
   }
+
 };
+
 </script>
 
 <style>
